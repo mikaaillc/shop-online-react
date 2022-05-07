@@ -39,8 +39,7 @@ export const Grid = () => {
     ])
 
     return (
-
-        <div class="ag-theme-balham-dark" style={{height: 400, width: 1000 , margin:"auto"}}  >
+        <div class="ag-theme-balham-dark" style={{height: 400, width: 1200 , margin:"auto"}}  >
             <AgGridReact
                 rowData={rowData}
                 columnDefs={columnDefs}>
