@@ -4,10 +4,9 @@ import { render } from 'react-dom';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
-import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham-dark.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine-dark.css';
-import {Checkbox} from "@mui/material";
+import {FormControlLabel,Checkbox} from "@mui/material";
 
 
 
@@ -28,10 +27,10 @@ axios(config)
     });
 
 
-export const Grid = () => {
+export default function Grid () {
     const gridRef = useRef();
+    const [checked, setChecked] = useState(false);
     const [rowData] = useState(getresponse);
-
     const onSelectionChanged = useCallback(() => {
         const selectedRows = gridRef.current.api.getSelectedRows();
         document.querySelector('Input[name = "productName"]').value =
@@ -44,14 +43,17 @@ export const Grid = () => {
             selectedRows.length === 1 ? selectedRows[0].stock : '';
         document.querySelector('input[name = "barcode"]').value =
             selectedRows.length === 1 ? selectedRows[0].barcode : '';
-        //todo chech auto set eklenecek
-        var checked=selectedRows[0].active;
-        if(selectedRows[0].active===true){
-        document.querySelector('input[name="chkAktif"]').value = checked;
-        }
-        else{document.querySelector('input[name="chkAktif"]').value = false;}
+/*        document.querySelector('input[name = "active"]').value =
+            selectedRows.length === 1 ? selectedRows[0].active : '';*/
 
     }, []);
+    const handleChange = (event) => {//check box setlemek için
+        if (event.data.active== true){
+            setChecked((checked) => true);
+        }else{
+            setChecked((checked) => false);// constların valuları setlenirken arrow func kullnılır
+        }
+    };
 
     const [columnDefs] = useState([
         { field: 'productName' },
@@ -66,16 +68,20 @@ export const Grid = () => {
     return (
 
 
-        <div class="ag-theme-balham-dark" style={{height: 400, width: 1300 , margin:"auto"}}   >
-                <AgGridReact
+        <div className="ag-theme-alpine-dark" style={{height: 400, width: 1300 , margin:"auto"}}    >
+            <FormControlLabel labelPlacement="start"
+                              control={<Checkbox  checked={checked}
+                                                 onChange={(e) => setChecked(e.target.checked)}
+                                                 name="chkAktif"  />} label="Aktif" />
+            <AgGridReact
                     rowData={rowData}
                     columnDefs={columnDefs}
                     ref={gridRef}
                     rowSelection={'single'}
-                    onSelectionChanged={onSelectionChanged}>
+                    onSelectionChanged={onSelectionChanged}
+                    onRowClicked={handleChange}
+            >
                 </AgGridReact>
         </div>
     );
 };
-
-render(<Grid />, document.getElementById('root'));

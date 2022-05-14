@@ -1,7 +1,7 @@
 
 import './App.css';
 import 'react-pro-sidebar/dist/css/styles.css';
-import {Grid} from "./grid";
+import Grid from "./grid";
 import Sidebar from "./sidebar";
 import FormUI from "./form";
 
@@ -18,7 +18,7 @@ function App() {
             <div  id="form"  >
                 <FormUI/>
             </div>
-            <Grid/>
+            <Grid style={{marginLeft:50,marginTop:40}} />
         </div>
       </div>
   );
