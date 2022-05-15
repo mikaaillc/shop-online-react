@@ -56,11 +56,7 @@ class  FormUI extends Component {
                                     control={<TextField id="textfield" name="barcode" variant="outlined"/>}
                                     labelPlacement="start"
                                 />
-                                <FormControlLabel
-                                    label="Aktif:"
-                                    control={<TextField id="textfield" name="active" variant="outlined"/>}
-                                    labelPlacement="start"
-                                />
+
                                 <FormControlLabel
                                     label="Kategori:"
                                     control={<CategoryCombo style={{float: "right", marginRight: 50}}/>}

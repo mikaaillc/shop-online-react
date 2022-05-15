@@ -14,7 +14,7 @@ function App() {
             <Sidebar/>
         </div>
 
-          <div style={{marginLeft:50,marginTop:40}}>
+          <div style={{marginLeft:300,marginTop:40}}>
             <div  id="form"  >
                 <FormUI/>
             </div>
@@ -22,6 +22,7 @@ function App() {
         </div>
       </div>
   );
+
 }
 
 export default App;

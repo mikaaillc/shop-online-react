@@ -4,8 +4,7 @@ import axios from "axios";
 import {Component, useEffect, useState} from "react";
 import './App.css';
 import {InputLabel, MenuItem, Select} from "@mui/material";
-
-
+import { makeStyles } from "@material-ui/core/styles";
 // const url ='http://localhost:8080/Category/getAllCategory'
 //
 // export default class  CategoryCombo extends Component{
@@ -38,10 +37,11 @@ import {InputLabel, MenuItem, Select} from "@mui/material";
 //     }
 // }
 
-export default function CategoryCombo() {
+export default function CategoryCombo(props) {
+
     const [list, setList] = useState([]);
     const [categoryName, setCategoryName] = useState([]);
-
+    const [reloadGrid, setReloadGrid] = useState([]);
     useEffect(() => {
         axios
             .get("http://localhost:8080/Category/getAllCategory")
@@ -55,17 +55,33 @@ export default function CategoryCombo() {
 
     const handleChange = (event) => {
         setCategoryName(event.target.value);
+        debugger;
+        var value = list.filter(function(item) {
+            if(item.categoryName == event.target.value)
+                return item.id
+        })
+        debugger;
+        axios
+            .get("http://localhost:8080/Product/getProductsByCategoryId", { params: { categoryId: value[0].id
+                } })
+            .then((response) => {
+                setReloadGrid(response.data)
+            })
+            .catch((e) => {
+                console.log(e.response.data);
+            });
     };
 
     return (
-        <div>
+        <div >
                 <Select
-                    labelId="category-label"
-                    name="category"
                     value={categoryName}
                     onChange={handleChange}
-                    style={{width:200}}
-
+                    reloadGrid={reloadGrid}
+                    style={{marginLeft:5,marginBottom:5,marginTop:5,width:200 ,height:40,backgroundColor:"whitesmoke"}}
+                    renderValue={
+                        () => <MenuItem > {props.placeholder}</MenuItem>
+                    }
                 >
                     {list.map((item) => (
                         <MenuItem key={item.id} value={item.categoryName}>
@@ -76,6 +92,7 @@ export default function CategoryCombo() {
 
         </div>
     );
+
 }
 
 
@@ -110,5 +127,3 @@ export default function CategoryCombo() {
 //
 //
 // }
-
-render(<CategoryCombo />, document.getElementById('root'));
