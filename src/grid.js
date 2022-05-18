@@ -1,5 +1,5 @@
 
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState,useEffect } from 'react';
 import { render } from 'react-dom';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
@@ -7,14 +7,14 @@ import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham-dark.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine-dark.css';
 import {FormControlLabel,Checkbox} from "@mui/material";
-import CategoryCombo from "./categoryCombo";
 
+import {InputLabel, MenuItem, Select} from "@mui/material";
 
 var axios = require('axios');
 var getresponse;
 var config = {
     method: 'get',
-    url: 'http://localhost:8080/Product/getAllProduct'
+    url: 'http://localhost:8082/Product/getAllProduct'
 };
 
 
@@ -55,6 +55,7 @@ export default function Grid (props) {
         setPlaceholder(event.data.category.categoryName)
 
     };
+
     function AgGridCheckbox (props) {
         const boolValue = props.value && props.value.toString() === 'true';
         const [isChecked, setIsChecked] = useState(boolValue);
@@ -83,6 +84,39 @@ export default function Grid (props) {
             editable: false
         }];
 
+        const [list, setList] = useState([]);
+    const [categoryName, setCategoryName] = useState([]);
+    const [reloadGrid, setReloadGrid] = useState([]);
+    useEffect(() => {
+        axios
+            .get("http://localhost:8082/Category/getAllCategory")
+            .then((response) => {
+                setList(response.data);
+            })
+            .catch((e) => {
+                console.log(e.response.data);
+            });
+    }, []);
+
+    const handleChangeCombo = (event) => {
+        setCategoryName(event.target.value);
+
+        var value = list.filter(function(item) {
+            if(item.categoryName == event.target.value)
+                return item.id
+        })
+
+        axios
+            .get("http://localhost:8082/Product/getProductsByCategoryId", { params: { categoryId: value[0].id
+                } })
+            .then((response) => {
+                gridRef.current.api.setRowData(response.data)
+            })
+            .catch((e) => {
+                console.log(e.response.data);
+            });
+    };
+
 
     return (
 
@@ -98,19 +132,39 @@ export default function Grid (props) {
 
         <FormControlLabel
                 label="Kategori:"
-                control={<CategoryCombo    placeholder={placehoder} style={{float: "right", marginRight: 50}}/>}//props kullanımı için
+                control={
+                    <Select
+                    value={categoryName}
+                    onChange={handleChangeCombo}
+                    placeholder={placehoder}
+                    reloadGrid={reloadGrid}
+                    style={{marginLeft:5,marginBottom:5,marginTop:5,width:200 ,height:40,backgroundColor:"whitesmoke",float: "right", marginRight: 50}}
+                    renderValue={
+                        () => <MenuItem > {props.placeholder}</MenuItem>
+                    }
+                >
+                    {list.map((item) => (
+                        <MenuItem key={item.id} value={item.categoryName}>
+                            {item.categoryName}
+                        </MenuItem>
+                    ))}
+                </Select>
+ 
+               }//props kullanımı için
                 labelPlacement="start"
 
             />
 
 
             <AgGridReact
+                    className="grid"
                     rowData={rowData}
                     columnDefs={columns}
                     ref={gridRef}
                     rowSelection={'single'}
                     onSelectionChanged={onSelectionChanged}
                     onRowClicked={handleChange}
+                
             >
                 </AgGridReact>
         </div>
