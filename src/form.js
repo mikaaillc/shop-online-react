@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import {Form, Label} from "reactstrap";
 import './App.css';
-import CategoryCombo from "./categoryCombo";
+// import CategoryCombo from "./categoryCombo";
 import {Box, FormControlLabel, TextField, Checkbox} from "@mui/material";
 
 
@@ -57,11 +57,11 @@ class  FormUI extends Component {
                                     labelPlacement="start"
                                 />
 
-                                <FormControlLabel
+                                {/* <FormControlLabel
                                     label="Kategori:"
                                     control={<CategoryCombo style={{float: "right", marginRight: 50}}/>}
                                     labelPlacement="start"
-                                />
+                                /> */}
 
                                {/* <FormControlLabel labelPlacement="start"
                                                   control={<Checkbox checked={checked}
