@@ -98,17 +98,34 @@ export default function Grid (props) {
             });
     }, []);
 
+    const handleChangeActive = (event) => {
+        setChecked(event.target.checked)
+    axios
+        .get("http://localhost:8082/Product/getProductsByActive/", {
+            params: {
+                active: event.target.checked
+            }
+        } )
+        .then((response) => {
+            gridRef.current.api.setRowData(response.data)
+        })
+        .catch((e) => {
+            console.log(e.response.data);
+        });
+    }
     const handleChangeCombo = (event) => {
-        setCategoryName(event.target.value);
-
-        var value = list.filter(function(item) {
-            if(item.categoryName == event.target.value)
+        setCategoryName(event.target.value);//comboya görünecek kategoriyi setlemek için
+        var value = list.filter(function (item) {
+            if (item.categoryName == event.target.value)
                 return item.id
         })
 
         axios
-            .get("http://localhost:8082/Product/getProductsByCategoryId", { params: { categoryId: value[0].id
-                } })
+            .get("http://localhost:8082/Product/getProductsByCategoryId", {
+                params: {
+                    categoryId: value[0].id
+                }
+            })
             .then((response) => {
                 gridRef.current.api.setRowData(response.data)
             })
@@ -126,31 +143,40 @@ export default function Grid (props) {
             <FormControlLabel labelPlacement="start"
                               style={{alignSelf: 'flex-end'}}
                               control={<Checkbox  checked={checked}
-                                                 onChange={(e) => setChecked(e.target.checked)}
+                                                 onChange={handleChangeActive}
                                                  name="chkAktif"  />} label="Aktif" />
 
 
-        <FormControlLabel
+            <FormControlLabel
                 label="Kategori:"
                 control={
                     <Select
-                    value={categoryName}
-                    onChange={handleChangeCombo}
-                    placeholder={placehoder}
-                    reloadGrid={reloadGrid}
-                    style={{marginLeft:5,marginBottom:5,marginTop:5,width:200 ,height:40,backgroundColor:"whitesmoke",float: "right", marginRight: 50}}
-                    renderValue={
-                        () => <MenuItem > {props.placeholder}</MenuItem>
-                    }
-                >
-                    {list.map((item) => (
-                        <MenuItem key={item.id} value={item.categoryName}>
-                            {item.categoryName}
-                        </MenuItem>
-                    ))}
-                </Select>
- 
-               }//props kullanımı için
+                        value={categoryName}
+                        onChange={handleChangeCombo}
+                        placeholder={placehoder}
+                        reloadGrid={reloadGrid}
+                        style={{
+                            marginLeft: 5,
+                            marginBottom: 5,
+                            marginTop: 5,
+                            width: 200,
+                            height: 40,
+                            backgroundColor: "whitesmoke",
+                            float: "right",
+                            marginRight: 50
+                        }}
+                        // renderValue={
+                        //     () => <MenuItem> {props.placeholder}</MenuItem>
+                        // }
+                    >
+                        {list.map((item) => (
+                            <MenuItem key={item.id} value={item.categoryName}>
+                                {item.categoryName}
+                            </MenuItem>
+                        ))}
+                    </Select>
+
+                }//props kullanımı için
                 labelPlacement="start"
 
             />
