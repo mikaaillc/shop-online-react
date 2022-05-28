@@ -3,22 +3,71 @@ import {Form} from "reactstrap";
 import './App.css';
 import {Box, FormControlLabel, TextField, Checkbox, Select, MenuItem} from "@mui/material";
 import React, { useState,useEffect } from 'react';
-
-
 var axios = require('axios');
-export default function FormUI (props){
-    const [categoryName, setCategoryName] = useState([]);
+
+function CheckAktif(props) {
     const [checked, setChecked] = useState(false);
-   // setChecked(props.activeCheck)
+    var check  = props.activeCheck.value
+    if (check== true){
+        setChecked((checked) => true);
+        props.activeCheck.value=null
+    }
+    if (check== false){
+        setChecked((checked) => false);
+        props.activeCheck.value=null
+    }
+    return  (
+        <Checkbox  checked={checked}
+        onClick={() => setChecked(!checked)}
+        name="chkAktif"  />
+    );
+  }
+
+  function SelectCategory(props) {
+    const [checked, setChecked] = useState(false);
+    var check  = props.activeCheck.value
+    if (check== true){
+        setChecked((checked) => true);
+        props.activeCheck.value=null
+    }
+    if (check== false){
+        setChecked((checked) => false);
+        props.activeCheck.value=null
+    }
+    return  (
+        <Select
+        name = 'combovalue'
+        value={categoryName}
+        onChange={handleChangeCombo}
+        style={{
+            marginLeft: 5,
+            marginBottom: 5,
+            marginTop: 5,
+            width: 200,
+            height: 40,
+            backgroundColor: "whitesmoke",
+            float: "right",
+            marginRight: 50
+        }}
+
+    >
+        {list.map((item) => (
+            <MenuItem key={item.id} value={item.categoryName}>
+                {item.categoryName}
+            </MenuItem>
+        ))}
+    </Select>
+    );
+  }
+
+
+export default function FormUI (props){
+    const [categoryName, setCategoryName] = useState([]); 
 
     const handleChangeCombo = (event) => {
         setCategoryName(event.target.value);//comboya görünecek kategoriyi setlemek için
 
     };
-    const handleChangeActive = (event) => {
-        debugger;
-        setChecked(event.target.checked)
-    }
 
     const handleSubmitSave =() => {
         var productName =document.querySelector('Input[name = "productName"]').value
@@ -192,29 +241,7 @@ export default function FormUI (props){
                                     label="Kategori:"
                                     id="label"
                                     control={
-                                        <Select
-                                            name = 'combovalue'
-                                            value={categoryName}
-                                            onChange={handleChangeCombo}
-                                            style={{
-                                                marginLeft: 5,
-                                                marginBottom: 5,
-                                                marginTop: 5,
-                                                width: 200,
-                                                height: 40,
-                                                backgroundColor: "whitesmoke",
-                                                float: "right",
-                                                marginRight: 50
-                                            }}
-
-                                        >
-                                            {list.map((item) => (
-                                                <MenuItem key={item.id} value={item.categoryName}>
-                                                    {item.categoryName}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-
+                                        <SelectCategory category={props.category} />
                                     }//props kullanımı için
                                     labelPlacement="start"
 
@@ -222,9 +249,7 @@ export default function FormUI (props){
                                 <FormControlLabel labelPlacement="start"
                                                   id="label"
                                                   style={{alignSelf: 'flex-end'}}
-                                                  control={<Checkbox  checked={props.activeCheck}
-                                                                      onClick={handleChangeActive}
-                                                                      name="chkAktif"  />} label="Aktif" />
+                                                  control={<CheckAktif activeCheck={props.activeCheck} />} label="Aktif" />
 
 
 
