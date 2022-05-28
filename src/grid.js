@@ -8,7 +8,7 @@ import 'ag-grid-community/dist/styles/ag-theme-balham-dark.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine-dark.css';
 import {FormControlLabel,Checkbox} from "@mui/material";
 
-import {InputLabel, MenuItem, Select} from "@mui/material";
+import { MenuItem, Select} from "@mui/material";
 
 
 var axios = require('axios');
@@ -28,7 +28,8 @@ axios(config)
     });
 
 var prodID=null;
-var activeCheck=null;
+var activeCheck={value:null};
+var category={value:null};
 export default function Grid (props) {
     const gridRef = useRef();
     const [checked, setChecked] = useState(false);
@@ -47,9 +48,11 @@ export default function Grid (props) {
         document.querySelector('input[name = "barcode"]').value =
             selectedRows.length === 1 ? selectedRows[0].barcode : '';
          prodID=selectedRows[0].id;
-         activeCheck=selectedRows[0].active
+         activeCheck.value=selectedRows[0].active
+         category.value=selectedRows[0].category
+
     }, []);
-    const handleChange = (event) => {//check box setlemek için
+    /* const handleChange = (event) => {//check box setlemek için
         if (event.data.active== true){
             setChecked((checked) => true);
         }else{
@@ -58,7 +61,7 @@ export default function Grid (props) {
 
         setPlaceholder(event.data.category.categoryName)
 
-    };
+    }; */
 
     function AgGridCheckbox (props) {
         const boolValue = props.value && props.value.toString() === 'true';
@@ -156,7 +159,7 @@ export default function Grid (props) {
 
         <div className="ag-theme-alpine-dark" style={{height: 400, width: 1300 , margin:"auto"}}    >
             <div  id="form"  style={{marginBottom:10,marginTop:40}} >
-                <FormUI prodID={prodID} activeCheck={activeCheck}/>{/*seçilen productid forma gönderildi*/}
+                <FormUI prodID={prodID} activeCheck={activeCheck} category={category}/>{/*seçilen productid forma gönderildi*/}
             </div>
             <AgGridReact
                     className="grid"
@@ -165,7 +168,7 @@ export default function Grid (props) {
                     ref={gridRef}
                     rowSelection={'single'}
                     onSelectionChanged={onSelectionChanged}
-                    onRowClicked={handleChange}
+                    /* onRowClicked={handleChange} */
                 
             >
                 </AgGridReact>
