@@ -3,9 +3,23 @@ import {Form} from "reactstrap";
 import './App.css';
 import {Box, FormControlLabel, TextField, Checkbox, Select, MenuItem} from "@mui/material";
 import React, { useState,useEffect } from 'react';
-var axios = require('axios');
 
-function CheckAktif(props) {
+var axios = require('axios');
+var categories;
+var config = {
+    method: 'get',
+    url: "http://localhost:8082/Category/getAllCategory"
+};
+
+
+axios(config)
+    .then(function (response) {
+        categories= response.data;
+    })
+    .catch(function (error) {
+        console.log(error);
+    });
+/*function CheckAktif(props) {
     const [checked, setChecked] = useState(false);
     var check  = props.activeCheck.value
     if (check== true){
@@ -16,24 +30,24 @@ function CheckAktif(props) {
         setChecked((checked) => false);
         props.activeCheck.value=null
     }
+    const checkActiveChange = (event) => {
+        debugger;
+        setChecked(event.target.checked);
+    }
+
     return  (
         <Checkbox  checked={checked}
-        onClick={() => setChecked(!checked)}
+        onClick={checkActiveChange}
         name="chkAktif"  />
     );
-  }
+  }*/
 
   function SelectCategory(props) {
-    const [checked, setChecked] = useState(false);
-    var check  = props.activeCheck.value
-    if (check== true){
-        setChecked((checked) => true);
-        props.activeCheck.value=null
-    }
-    if (check== false){
-        setChecked((checked) => false);
-        props.activeCheck.value=null
-    }
+      const [categoryName, setCategoryName] = useState([]);
+
+      const handleChangeCombo = (event) => {
+          setCategoryName(event.target.value);//comboya görünecek kategoriyi setlemek için
+      };
     return  (
         <Select
         name = 'combovalue'
@@ -51,7 +65,7 @@ function CheckAktif(props) {
         }}
 
     >
-        {list.map((item) => (
+        {props.categories.map((item) => (
             <MenuItem key={item.id} value={item.categoryName}>
                 {item.categoryName}
             </MenuItem>
@@ -62,27 +76,29 @@ function CheckAktif(props) {
 
 
 export default function FormUI (props){
-    const [categoryName, setCategoryName] = useState([]); 
 
-    const handleChangeCombo = (event) => {
-        setCategoryName(event.target.value);//comboya görünecek kategoriyi setlemek için
 
-    };
 
     const handleSubmitSave =() => {
+        /* const formData = new FormData(event.target)//form getvalue
+        const data = {}
+
+        event.preventDefault()
+
+        for (let entry of formData.entries()) {
+            data[entry[0]] = entry[1]
+        }*/
+
         var productName =document.querySelector('Input[name = "productName"]').value
         var discount =document.querySelector('Input[name = "discount"]').value
         var price =document.querySelector('Input[name = "price"]').value
         var stock =document.querySelector('Input[name = "stock"]').value
         var barcode =document.querySelector('Input[name = "barcode"]').value
-        var active =document.querySelector('Input[name = "chkAktif"]').value
+        var active =!props.activeCheck//gridden seçilen checkbox değerinin tersi alınır
         var combovalue =document.querySelector('Input[name = "combovalue"]').value
-        if(active=='on')
-            active=true;
-        else
-            active=false;
 
-        var value = list.filter(function (item) {
+
+        var value = categories.filter(function (item) {
             if (item.categoryName == combovalue)//secilmiş olan combonun valuesu
                 return item.id
         })
@@ -125,14 +141,9 @@ export default function FormUI (props){
         var price =document.querySelector('Input[name = "price"]').value
         var stock =document.querySelector('Input[name = "stock"]').value
         var barcode =document.querySelector('Input[name = "barcode"]').value
-        var active =document.querySelector('Input[name = "chkAktif"]').value
+        var active =!props.activeCheck//gridden seçilen checkbox değerinin tersi alınır
         var combovalue =document.querySelector('Input[name = "combovalue"]').value
-        if(active=='on')
-            active=true;
-        else
-            active=false;
-
-        var value = list.filter(function (item) {
+        var value = categories.filter(function (item) {
             if (item.categoryName == combovalue)//secilmiş olan combonun valuesu
                 return item.id
         })
@@ -150,7 +161,7 @@ export default function FormUI (props){
             },
             "userId": 1 // todo giriş yapan kullanıcının id si
         });
-
+debugger;
         var config = {
             method: 'put',
             url: 'http://localhost:8082/Product/updateProduct/'+props.prodID,
@@ -162,25 +173,15 @@ export default function FormUI (props){
 
         axios(config)
             .then(function (response) {
+
                 console.log(JSON.stringify(response.data));
             })
             .catch(function (error) {
+
                 console.log(error);
             });
 
     }
-
-    const [list, setList] = useState([]);
-    useEffect(() => {
-        axios
-            .get("http://localhost:8082/Category/getAllCategory")
-            .then((response) => {
-                setList(response.data);
-            })
-            .catch((e) => {
-                console.log(e.response.data);
-            });
-    }, []);
         return (
 
 
@@ -191,7 +192,6 @@ export default function FormUI (props){
 
                     <Box
                         className="box"
-                        component="form"
                         sx={{
                             '& .MuiTextField-root': {m: 1, width: '25ch'},
                         }}
@@ -241,15 +241,15 @@ export default function FormUI (props){
                                     label="Kategori:"
                                     id="label"
                                     control={
-                                        <SelectCategory category={props.category} />
+                                        <SelectCategory category={props.category} categories={categories}/>
                                     }//props kullanımı için
                                     labelPlacement="start"
 
                                 />
-                                <FormControlLabel labelPlacement="start"
+                                {/*<FormControlLabel labelPlacement="start"
                                                   id="label"
                                                   style={{alignSelf: 'flex-end'}}
-                                                  control={<CheckAktif activeCheck={props.activeCheck} />} label="Aktif" />
+                                                  control={<CheckAktif activeCheck={props.activeCheck} />} label="Aktif" />*/}
 
 
 
@@ -270,10 +270,12 @@ export default function FormUI (props){
                             </div>
 
                             <div>
-                                <button className="button" style={{float: "right", marginRight: 50}} onClick={handleSubmitUpdate}>
+                                <button className="button" style={{float: "right", marginRight: 50}} onClick={handleSubmitUpdate}
+                                        categories={categories}>
                                     <span>Güncelle </span>
                                 </button>
                                 <button className="glow-on-hover" onClick={handleSubmitSave}
+                                        categories={categories}  activeCheck={props.activeCheck}
                                         style={{float: "right", marginRight: 50}}>Kaydet
                                 </button>
                             </div>

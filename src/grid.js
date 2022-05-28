@@ -29,7 +29,7 @@ axios(config)
 
 var prodID=null;
 var activeCheck={value:null};
-var category={value:null};
+var category;
 export default function Grid (props) {
     const gridRef = useRef();
     const [checked, setChecked] = useState(false);
@@ -49,19 +49,17 @@ export default function Grid (props) {
             selectedRows.length === 1 ? selectedRows[0].barcode : '';
          prodID=selectedRows[0].id;
          activeCheck.value=selectedRows[0].active
-         category.value=selectedRows[0].category
+         category=selectedRows[0].category
 
     }, []);
-    /* const handleChange = (event) => {//check box setlemek için
+    const handleChange = (event) => {//check box setlemek için
         if (event.data.active== true){
             setChecked((checked) => true);
         }else{
             setChecked((checked) => false);// constların valuları setlenirken arrow func kullnılır
         }
 
-        setPlaceholder(event.data.category.categoryName)
-
-    }; */
+    };
 
     function AgGridCheckbox (props) {
         const boolValue = props.value && props.value.toString() === 'true';
@@ -157,10 +155,11 @@ export default function Grid (props) {
     return (
 
 
-        <div className="ag-theme-alpine-dark" style={{height: 400, width: 1300 , margin:"auto"}}    >
+        <div className="ag-theme-alpine-dark" style={{height: 1000, width: 1300 , margin:"auto"}}    >
             <div  id="form"  style={{marginBottom:10,marginTop:40}} >
                 <FormUI prodID={prodID} activeCheck={activeCheck} category={category}/>{/*seçilen productid forma gönderildi*/}
             </div>
+            <div className="ag-theme-alpine-dark" style={{height: 400, width: 1300 , margin:"auto"}}    >
             <AgGridReact
                     className="grid"
                     rowData={rowData}
@@ -168,16 +167,17 @@ export default function Grid (props) {
                     ref={gridRef}
                     rowSelection={'single'}
                     onSelectionChanged={onSelectionChanged}
-                    /* onRowClicked={handleChange} */
+                    onRowClicked={handleChange}
                 
             >
                 </AgGridReact>
-
+            </div>
+            <div style={{marginTop:20}}>
             <FormControlLabel labelPlacement="start"
                               style={{alignSelf: 'flex-end'}}
                               control={<Checkbox  checked={checked}
                                                   onChange={handleChangeActive}
-                                                  name="chkAktif"  />} label="Aktif" />
+                                                   />} label="Aktif" />
 
 
             <FormControlLabel
@@ -216,6 +216,7 @@ export default function Grid (props) {
                 labelPlacement="start"
 
             />
+            </div>
 
 
 

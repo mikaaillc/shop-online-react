@@ -10,7 +10,7 @@ function App() {
   return (
     <div style={{overflow: "hidden"}}>
 
-        <div  id="sidebar">
+        <div >
             <Sidebar/>
         </div>
 
