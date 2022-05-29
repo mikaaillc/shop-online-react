@@ -3,14 +3,18 @@ import React, { useCallback, useRef, useState,useEffect } from 'react';
 import FormUI from "./form";
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
-import 'ag-grid-community/dist/styles/ag-theme-balham-dark.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine-dark.css';
-import {FormControlLabel,Checkbox} from "@mui/material";
-
+import {FormControlLabel,Checkbox,Button} from "@mui/material";
+import DeleteIcon from '@mui/icons-material/Delete';
 import { MenuItem, Select} from "@mui/material";
 
 
+//forma gönderilen veriler
+var prodId = {value: null};
+var activeCheck = {value: null};
+var category = {value: null};
+
+//region girid load
 var axios = require('axios');
 var getresponse;
 var config = {
@@ -21,75 +25,17 @@ var config = {
 
 axios(config)
     .then(function (response) {
-        getresponse= response.data;
+        getresponse = response.data;
     })
     .catch(function (error) {
         console.log(error);
     });
+//endregion
 
-var prodID=null;
-var activeCheck={value:null};
-var category;
-export default function Grid (props) {
-    const gridRef = useRef();
-    const [checked, setChecked] = useState(false);
-    const [placehoder,setPlaceholder]=useState("");
-    const rowData = getresponse;
-    const onSelectionChanged = useCallback(() => {
-        const selectedRows = gridRef.current.api.getSelectedRows();
-        document.querySelector('Input[name = "productName"]').value =
-            selectedRows.length === 1 ? selectedRows[0].productName : '';
-        document.querySelector('input[name = "discount"]').value =
-            selectedRows.length === 1 ? selectedRows[0].discount : '';
-        document.querySelector('input[name = "price"]').value =
-            selectedRows.length === 1 ? selectedRows[0].price : '';
-        document.querySelector('input[name = "stock"]').value =
-            selectedRows.length === 1 ? selectedRows[0].stock : '';
-        document.querySelector('input[name = "barcode"]').value =
-            selectedRows.length === 1 ? selectedRows[0].barcode : '';
-         prodID=selectedRows[0].id;
-         activeCheck.value=selectedRows[0].active
-         category=selectedRows[0].category
+export default function Grid(props) {
 
-    }, []);
-    const handleChange = (event) => {//check box setlemek için
-        if (event.data.active== true){
-            setChecked((checked) => true);
-        }else{
-            setChecked((checked) => false);// constların valuları setlenirken arrow func kullnılır
-        }
-
-    };
-
-    function AgGridCheckbox (props) {
-        const boolValue = props.value && props.value.toString() === 'true';
-        const [isChecked, setIsChecked] = useState(boolValue);
-        const onChanged = () => {
-            props.setValue(!isChecked);
-            setIsChecked(!isChecked);
-        };
-        return (
-            <div>
-                <input type="checkbox" checked={isChecked} onChange={onChanged} />
-            </div>
-        );
-    }
-    const columns = [
-        { field: 'productName' , width: 150,},
-        { field: 'discount' , width: 150, },
-        {field: 'price'},
-        { field: 'createDate' },
-        { field: 'stock' ,width: 150,},
-        { field: 'barcode' },
-        {
-            headerName: 'Active',
-            field: 'active',
-            width: 150,
-            cellRendererFramework: AgGridCheckbox,
-            editable: false
-        }];
-
-        const [list, setList] = useState([]);
+    // region Select box dolduruluyor
+    const [list, setList] = useState([]);
     const [categoryName, setCategoryName] = useState([]);
     useEffect(() => {
         axios
@@ -101,25 +47,141 @@ export default function Grid (props) {
                 console.log(e.response.data);
             });
     }, []);
+    //endregion
 
+    //region grid işlemleri
+    const gridRef = useRef();
+    const rowData = getresponse;
+    const onSelectionChanged = useCallback((props) => {
+        const selectedRows = gridRef.current.api.getSelectedRows();
+        document.querySelector('Input[name = "productName"]').value =
+            selectedRows.length === 1 ? selectedRows[0].productName : '';
+        document.querySelector('input[name = "discount"]').value =
+            selectedRows.length === 1 ? selectedRows[0].discount : '';
+        document.querySelector('input[name = "price"]').value =
+            selectedRows.length === 1 ? selectedRows[0].price : '';
+        document.querySelector('input[name = "stock"]').value =
+            selectedRows.length === 1 ? selectedRows[0].stock : '';
+        document.querySelector('input[name = "barcode"]').value =
+            selectedRows.length === 1 ? selectedRows[0].barcode : '';
+        prodId.value = selectedRows[0].id;
+        activeCheck.value = selectedRows[0].active
+        category.value = selectedRows[0].category
+        // if (selectedRows[0].active== true){
+        //     setChecked((checked) => true);
+        // }else{
+        //     setChecked((checked) => false);// constların valuları setlenirken arrow func kullnılır
+        // }
+
+    }, []);
+
+    function AgGridCheckbox(props) {
+        const boolValue = props.value && props.value.toString() === 'true';
+        const [isChecked, setIsChecked] = useState(boolValue);
+        const onChanged = () => {
+            props.setValue(!isChecked);
+            setIsChecked(!isChecked);
+        };
+        return (
+            <div>
+                <input type="checkbox" checked={isChecked} onChange={onChanged}/>
+            </div>
+        );
+    }
+
+    function AgGridcombo(props) {
+        const category = props.value;
+        const [categoryValue, setcategoryValue] = useState(category);
+        const onChanged = (event) => {
+            props.setValue(event.target.value);//props value değitiriliyor
+            setcategoryValue(event.target.value);
+        };
+        return (
+            <div>
+                <Select
+                    name='combovalue'
+                    value={categoryValue}
+                    onChange={onChanged}
+                    style={{
+
+                        marginBottom: 5,
+                        marginTop: 5,
+                        width: 200,
+                        height: 40,
+                        backgroundColor: "whitesmoke",
+                        marginRight: 50
+                    }}
+
+                >
+                    {list.map((item) => (
+                        <MenuItem key={item.id} value={item.categoryName}>
+                            {item.categoryName}
+                        </MenuItem>
+                    ))}
+                </Select>
+            </div>
+        );
+    }
+
+    function DeleteButton(props) {
+
+        return (
+            <div style={{
+                marginTop: 5,
+            }}>
+                <Button variant="outlined" startIcon={<DeleteIcon/>} style={{color: "#c05f5f"}}>
+                    Delete
+                </Button>
+            </div>
+        );
+    }
+
+    const columns = [
+        {field: 'productName', width: 150,},
+        {field: 'discount', width: 150,},
+        {field: 'price'},
+        {field: 'createDate'},
+        {field: 'stock', width: 80},
+        {field: 'barcode', width: 180},
+        {
+            field: 'active',
+            width: 100,
+            cellRendererFramework: AgGridCheckbox,
+            editable: false
+        },
+        {
+            headerName: 'Category',
+            field: 'category.categoryName',
+            width: 220,
+            cellRendererFramework: AgGridcombo,
+            editable: false
+        }, {
+            width: 150,
+            cellRendererFramework: DeleteButton,
+
+        }];
+    // endregion
+
+    //region sorgu işlemleri
+    const [checked, setChecked] = useState(false);
     const handleChangeActive = (event) => {
         setChecked(event.target.checked)
-    axios
-        .get("http://localhost:8082/Product/getProductsByActive/", {
-            params: {
-                active: event.target.checked
-            }
-        } )
-        .then((response) => {
-            gridRef.current.api.setRowData(response.data)
-        })
-        .catch((e) => {
-            console.log(e.response.data);
-        });
+        axios
+            .get("http://localhost:8082/Product/getProductsByActive/", {
+                params: {
+                    active: event.target.checked
+                }
+            })
+            .then((response) => {
+                gridRef.current.api.setRowData(response.data)
+            })
+            .catch((e) => {
+                console.log(e.response.data);
+            });
     }
     const handleChangeCombo = (event) => {
         setCategoryName(event.target.value);//comboya görünecek kategoriyi setlemek için
-        if(event.target.value=='Tumu'){
+        if (event.target.value == 'Tumu') {
             axios
                 .get(config.url,
                 )
@@ -129,7 +191,7 @@ export default function Grid (props) {
                 .catch((e) => {
                     console.log(e.response.data);
                 });
-        }else {
+        } else {
             var value = list.filter(function (item) {
                 if (item.categoryName == event.target.value)
                     return item.id
@@ -150,74 +212,71 @@ export default function Grid (props) {
 
 
     };
-
+    //endregion
 
     return (
-
-
-        <div className="ag-theme-alpine-dark" style={{height: 1000, width: 1300 , margin:"auto"}}    >
-            <div  id="form"  style={{marginBottom:10,marginTop:40}} >
-                <FormUI prodID={prodID} activeCheck={activeCheck} category={category}/>{/*seçilen productid forma gönderildi*/}
+        <div className="ag-theme-alpine-dark" style={{height: 1000, width: 1300, margin: "auto"}}>
+            <div id="form" style={{marginBottom: 10, marginTop: 40, marginLeft: 50}}>
+                <FormUI prodId={prodId} activeCheck={activeCheck}
+                        category={category}/>{/*seçilen productid forma gönderildi*/}
             </div>
-            <div className="ag-theme-alpine-dark" style={{height: 400, width: 1300 , margin:"auto"}}    >
-            <AgGridReact
+            <div className="ag-theme-alpine-dark" style={{height: 400, width: 1450, margin: "auto"}}>
+                <AgGridReact
                     className="grid"
                     rowData={rowData}
                     columnDefs={columns}
                     ref={gridRef}
+                    rowHeight={50}
                     rowSelection={'single'}
                     onSelectionChanged={onSelectionChanged}
-                    onRowClicked={handleChange}
-                
-            >
+                    //onRowClicked={handleChange}
+
+                >
                 </AgGridReact>
             </div>
-            <div style={{marginTop:20}}>
-            <FormControlLabel labelPlacement="start"
-                              style={{alignSelf: 'flex-end'}}
-                              control={<Checkbox  checked={checked}
-                                                  onChange={handleChangeActive}
-                                                   />} label="Aktif" />
+            <div style={{marginTop: 20}}>
+                <FormControlLabel labelPlacement="start"
+                                  style={{alignSelf: 'flex-end'}}
+                                  control={<Checkbox checked={checked}
+                                                     onChange={handleChangeActive}
+                                  />} label="Aktif"/>
 
 
-            <FormControlLabel
-                label="Kategori:"
-                control={
-                    <Select
-                        value={categoryName}
-                        onChange={handleChangeCombo}
-                        placeholder={placehoder}
-
-                        style={{
-                            marginLeft: 5,
-                            marginBottom: 5,
-                            marginTop: 5,
-                            width: 200,
-                            height: 40,
-                            backgroundColor: "whitesmoke",
-                            float: "right",
-                            marginRight: 50
-                        }}
-                        // renderValue={
-                        //     () => <MenuItem> {props.placeholder}</MenuItem>
-                        // }
-                    >
-                        <MenuItem value='Tumu'>
-                            Tümü
-                        </MenuItem>
-                        {list.map((item) => (
-                            <MenuItem key={item.id} value={item.categoryName}>
-                                {item.categoryName}
+                <FormControlLabel
+                    label="Kategori:"
+                    control={
+                        <Select
+                            value={categoryName}
+                            onChange={handleChangeCombo}
+                            style={{
+                                marginLeft: 5,
+                                marginBottom: 5,
+                                marginTop: 5,
+                                width: 200,
+                                height: 40,
+                                backgroundColor: "whitesmoke",
+                                float: "right",
+                                marginRight: 50
+                            }}
+                            // renderValue={
+                            //     () => <MenuItem> {props.placeholder}</MenuItem>
+                            // }
+                        >
+                            <MenuItem value='Tumu'>
+                                Tümü
                             </MenuItem>
-                        ))}
-                    </Select>
+                            {list.map((item) => (
+                                <MenuItem key={item.id} value={item.categoryName}>
+                                    {item.categoryName}
+                                </MenuItem>
+                            ))}
+                        </Select>
 
-                }//props kullanımı için
-                labelPlacement="start"
+                    }//props kullanımı için
+                    labelPlacement="start"
 
-            />
+                />
             </div>
-
 
 
         </div>
