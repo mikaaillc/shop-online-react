@@ -7,6 +7,7 @@ import 'ag-grid-community/dist/styles/ag-theme-alpine-dark.css';
 import {FormControlLabel,Checkbox,Button} from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { MenuItem, Select} from "@mui/material";
+import * as moment from 'moment';
 
 
 //forma gönderilen veriler
@@ -124,33 +125,63 @@ export default function Grid(props) {
     }
 
     function DeleteButton(props) {
+        //todo silme işlemi için warning bul
+        function showWarninig() {
 
+        }
+
+
+        const DeleteProd = () =>
+        {
+            var config = {
+                method: 'put',
+                url: 'http://localhost:8082/Product/deleteByProductId/' + prodId.value,//gridden seiçilen ürün id
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+
+            axios(config)
+                .then(function (response) {
+                    console.log(JSON.stringify(response.data));
+                })
+                .catch(function (error) {
+
+                    console.log(error);
+                });
+        }
         return (
             <div style={{
                 marginTop: 5,
             }}>
-                <Button variant="outlined" startIcon={<DeleteIcon/>} style={{color: "#c05f5f"}}>
-                    Delete
+                <Button onClick={showWarninig} variant="outlined" startIcon={<DeleteIcon/>} style={{color: "#c05f5f"}}>
+                    Sil
                 </Button>
             </div>
         );
     }
+    // grid xaman formatı için
+     function dateFormatter(params) {
+        return moment(params.value).format('MM/DD/YYYY HH:mm');
+    }
 
     const columns = [
-        {field: 'productName', width: 150,},
-        {field: 'discount', width: 150,},
-        {field: 'price'},
-        {field: 'createDate'},
-        {field: 'stock', width: 80},
-        {field: 'barcode', width: 180},
+        {field: 'productName', width: 150, headerName:"Ürün Adı"},
+        {field: 'price',width: 150,headerName:" Ürün Fiyat"},
+        {field: 'stock', width: 100,headerName:"Adet"},
+        {field: 'discount', width: 150,headerName:"İndirim"},
+        {field: 'createDate',headerName:"Kayıt Zamanı",
+            valueFormatter: dateFormatter},
+        {field: 'barcode', width: 180,headerName:"Barkod"},
         {
             field: 'active',
+            headerName:"Aktif",
             width: 100,
             cellRendererFramework: AgGridCheckbox,
             editable: false
         },
         {
-            headerName: 'Category',
+            headerName: 'Kategori',
             field: 'category.categoryName',
             width: 220,
             cellRendererFramework: AgGridcombo,

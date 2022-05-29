@@ -146,7 +146,6 @@ export default function FormUI(props) {
 
         axios(config)
             .then(function (response) {
-                debugger;
                 console.log(JSON.stringify(response.data));
             })
             .catch(function (error) {
