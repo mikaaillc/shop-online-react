@@ -4,14 +4,24 @@ import FormUI from "./form";
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine-dark.css';
-import {FormControlLabel,Checkbox,Button} from "@mui/material";
+import {
+    FormControlLabel,
+    Checkbox,
+    Button,
+    DialogTitle,
+    DialogContent,
+    DialogContentText,
+    DialogActions, Dialog, Box
+} from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { MenuItem, Select} from "@mui/material";
 import * as moment from 'moment';
+import Slide from '@mui/material/Slide';
 
 
 //forma gönderilen veriler
 var prodId = {value: null};
+var deletedProd;
 var activeCheck = {value: null};
 var category = {value: null};
 
@@ -66,6 +76,7 @@ export default function Grid(props) {
         document.querySelector('input[name = "barcode"]').value =
             selectedRows.length === 1 ? selectedRows[0].barcode : '';
         prodId.value = selectedRows[0].id;
+        deletedProd = selectedRows[0].id;
         activeCheck.value = selectedRows[0].active
         category.value = selectedRows[0].category
         // if (selectedRows[0].active== true){
@@ -124,18 +135,22 @@ export default function Grid(props) {
         );
     }
 
-    function DeleteButton(props) {
-        //todo silme işlemi için warning bul
-        function showWarninig() {
+    function DeleteButton() {
+        const [open, setOpen] = useState(false);
+        const Transition = React.forwardRef(function Transition(props, ref) {
+            return <Slide direction="up" ref={ref} {...props} />;
+        });
+        const showWarninig = () => {
+            setOpen(true);
+        };
+        const handleClose = () => {
+            setOpen(false);
+        };
 
-        }
-
-
-        const DeleteProd = () =>
-        {
+        const DeleteProd = () => {
             var config = {
-                method: 'put',
-                url: 'http://localhost:8082/Product/deleteByProductId/' + prodId.value,//gridden seiçilen ürün id
+                method: 'delete',
+                url: 'http://localhost:8082/Product/deleteByProductId/' + deletedProd,//gridden seiçilen ürün id
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -143,10 +158,10 @@ export default function Grid(props) {
 
             axios(config)
                 .then(function (response) {
-                    console.log(JSON.stringify(response.data));
+                    setOpen(false);
+
                 })
                 .catch(function (error) {
-
                     console.log(error);
                 });
         }
@@ -154,14 +169,43 @@ export default function Grid(props) {
             <div style={{
                 marginTop: 5,
             }}>
+
                 <Button onClick={showWarninig} variant="outlined" startIcon={<DeleteIcon/>} style={{color: "#c05f5f"}}>
                     Sil
                 </Button>
+                <Dialog
+                    open={open}
+                    TransitionComponent={Transition}
+                    keepMounted
+                    onClose={handleClose}
+                    aria-describedby="alert-dialog-slide-description"
+                >
+                    <DialogTitle>{"UYARI!!"}</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-slide-description">
+                            Ürünü Silmek İstediğinize Emin misiniz?
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Box
+                            className="box"
+                            sx={{
+                                '& .MuiTextField-root': {m: 1, width: '25ch'},
+                            }}
+                            noValidate
+                            autoComplete="off"
+                        >
+                        <Button onClick={handleClose}>Vazgeç</Button>
+                        <Button onClick={DeleteProd}>Sil</Button>
+                        </Box>
+                    </DialogActions>
+                </Dialog>
             </div>
         );
     }
-    // grid xaman formatı için
-     function dateFormatter(params) {
+
+    // grid zaman formatı için
+    function dateFormatter(params) {
         return moment(params.value).format('MM/DD/YYYY HH:mm');
     }
 
