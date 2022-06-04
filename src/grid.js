@@ -33,8 +33,6 @@ var config = {
     url: 'http://localhost:8082/Product/getAllProduct'
 };
 
-//bar chart için
-
 //endregion
 
 export default function Grid(props) {
@@ -42,7 +40,7 @@ export default function Grid(props) {
     // region Select box Load
     const [list, setList] = useState([]);
     const [categoryName, setCategoryName] = useState([]);
-    const [categoryArray ]=useState([]);
+    const [categoryArray ]=useState([]);//barchart için kategori array
     useEffect(() => {
         axios
             .get("http://localhost:8082/Category/getAllCategory")
