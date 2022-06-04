@@ -45,7 +45,7 @@
     margin-right: 20px;
     margin-top: 20px;
     border-radius: 50px;
-    background: #283464;
+    background: #6c6f85;
     font-size: 1.3rem;
 
 }
@@ -94,7 +94,7 @@
 #menuItem {
     margin-top: 50px;
     font-family: 'Roboto', sans-serif;
-    font-size: 2rem;
+    font-size: 1.6rem;
     border-radius: 0.2rem;
     color: rgb(255, 255, 255);
     border: none;
@@ -148,6 +148,83 @@
     background-color: #3e8e41;
     box-shadow: 0 5px #666;
     transform: translateY(4px);
+}
+
+.menuItem2 {
+    border-radius: 10px;
+    background-color: #283464;
+    border: none;
+    color: #FFFFFF;
+    text-align: center;
+    font-size: 30px;
+    padding: 20px;
+    transition: all 0.5s;
+    cursor: pointer;
+    margin-bottom: 10px;
+    width: 200px;
+
+}
+
+.menuItem2 span {
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    transition: 0.5s;
+}
+
+.menuItem2 span:after {
+    content: '\00bb';
+    position: absolute;
+    opacity: 0;
+    top: 0;
+    right: -20px;
+    transition: 0.5s;
+}
+
+.menuItem2:hover span {
+    padding-right: 25px;
+}
+
+.menuItem2:hover span:after {
+    opacity: 1;
+    right: 0;
+}
+
+.menuItem2:hover {
+    background-color: #333354
+}
+
+.menuItem2:active {
+    background-color: #333354;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+}
+#prodicon{
+    content: url(images/Favorites/icons8-shopping-cart-100.png) ;
+    float: right;
+    width: 40px;
+    height: 40px;
+}
+#prodicon{
+    content: url(images/Favorites/icons8-shopping-cart-100.png) ;
+    float: right;
+    width: 30px;
+    height: 30px;
+    margin-bottom: 4px;
+}
+#categoryicon{
+    content: url(images/Favorites/icons8-categories-64.png) ;
+    float: right;
+    width: 20px;
+    height: 20px;
+    margin-bottom: 4px;
+}
+#usericon{
+    content: url(images/Favorites/icons8-user-64.png) ;
+    float: left;
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
 }
 
 
@@ -284,3 +361,4 @@
     -webkit-transform: translateY(-4rem);
     transform: translateY(-4rem);
 }
+
