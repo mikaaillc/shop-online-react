@@ -34,7 +34,7 @@ var config = {
 };
 
 //bar chart için
-var categoryArray = [];
+
 //endregion
 
 export default function Grid(props) {
@@ -42,6 +42,7 @@ export default function Grid(props) {
     // region Select box Load
     const [list, setList] = useState([]);
     const [categoryName, setCategoryName] = useState([]);
+    const [categoryArray ]=useState([]);
     useEffect(() => {
         axios
             .get("http://localhost:8082/Category/getAllCategory")

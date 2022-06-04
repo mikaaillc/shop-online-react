@@ -8,9 +8,7 @@ import Icon from '@mui/material/Icon';
 
 
 function App() {
-    const ChangeItems=(props)=>{
 
-    }
 
     const [renderItems,setRenderItems] = useState("products");
 
@@ -25,9 +23,9 @@ function App() {
                 marginRight: 50
             }}/>
         </div>;
-    } else {
+    } else if(renderItems=="category"){
            return <div style={{marginTop: 50, marginLeft: 100}}>
-            <h1>asdasdaSAD AS </h1>
+            <h1>Kategori Bölümü</h1>
         </div>;
     }}
 
@@ -36,15 +34,17 @@ function App() {
             <div id="sidebar">
                 <ProSidebar style={{height: 900, width: 200, marginLeft: 20, marginTop: 20, fontSize: 5}}>
                     <Menu iconShape="circle" style={{marginLeft: 20, marginTop: 20}}>
-                        <MenuItem  id={"menuItem"}> <span id="usericon"></span> ShopOnline </MenuItem>
-                        <MenuItem  className="menuItem2">  <span id="prodicon"></span>Ürünler</MenuItem>
-                        <MenuItem   className="menuItem2"><span id="categoryicon"></span>Kategoriler</MenuItem>
+                        <MenuItem id={"menuItem"}> <span id="usericon"></span> ShopOnline </MenuItem>
+                        <MenuItem className="menuItem2" onClick={(e) => setRenderItems("products")}> <span
+                            id="prodicon"></span>Ürünler</MenuItem>
+                        <MenuItem className="menuItem2" onClick={(e) => setRenderItems("category")}><span
+                            id="categoryicon"></span>Kategoriler</MenuItem>
 
                     </Menu>
                 </ProSidebar>
             </div>
             <RederItems/>
-<span></span>
+
 
 
         </div>
