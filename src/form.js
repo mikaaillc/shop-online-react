@@ -1,8 +1,7 @@
-
-import { Form} from "reactstrap";
+import {Form} from "reactstrap";
 import './App.css';
 import {Box, FormControlLabel, TextField, Checkbox, Select, MenuItem} from "@mui/material";
-import React, { useState,useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 
 // region category combo load
 var axios = require('axios');
@@ -161,13 +160,13 @@ export default function FormUI(props) {
         <div className="card">
 
             <br/>
-            <h4 id="label" style={{marginLeft: 20, marginBottom: 50}}>ÜRÜN BİLGİLERİ</h4>
+            <h3 id="label" style={{marginLeft: 20, marginBottom: 30}}>ÜRÜN BİLGİLERİ</h3>
             <div className="card-body">
 
                 <Box
                     className="box"
                     sx={{
-                        '& .MuiTextField-root': {m: 1, width: '15ch'},
+                        '& .MuiTextField-root': {m: 1, width: '25ch'},
                     }}
                     noValidate
                     autoComplete="off"

@@ -3,7 +3,6 @@ import {Bar} from "react-chartjs-2";
 import React from "react";
 
 
-
 export function BarChart(props) {
     let chartExample3 = {
 
@@ -85,15 +84,16 @@ export function BarChart(props) {
     }
     return (
 
-        <div>
-            <Card style={{float:"right" }} >
+        <div id="graph">
+            <Card>
                 <CardHeader>
-                    <h3 className="card-category">Kategori Verileri</h3>
+                    <h3 className="card-category" id="label" style={{marginLeft: 20, marginBottom: 50}}>Kategori
+                        Verileri</h3>
                 </CardHeader>
                 <CardBody>
-                    <div className="chart-area"  style={{ id:"graph",
-                        width: "400px",
-                        height: "400px"
+                    <div className="chart-area" style={{
+                        width: "380px",
+                        height: "350px"
                     }}>
                         <Bar
                             data={chartExample3.data}

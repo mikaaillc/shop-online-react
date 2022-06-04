@@ -1,7 +1,6 @@
-
-import React, { useCallback, useRef, useState,useEffect } from 'react';
+import React, {useCallback, useRef, useState, useEffect} from 'react';
 import FormUI from "./form";
-import { AgGridReact } from 'ag-grid-react';
+import {AgGridReact} from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine-dark.css';
 import {
@@ -15,7 +14,7 @@ import {
 } from "@mui/material";
 import './App.css';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { MenuItem, Select} from "@mui/material";
+import {MenuItem, Select} from "@mui/material";
 import * as moment from 'moment';
 import Slide from '@mui/material/Slide';
 import {BarChart} from "./barChart";
@@ -35,7 +34,7 @@ var config = {
 };
 
 //bar chart için
-var categoryArray=[];
+var categoryArray = [];
 //endregion
 
 export default function Grid(props) {
@@ -213,8 +212,8 @@ export default function Grid(props) {
                             noValidate
                             autoComplete="off"
                         >
-                        <Button onClick={handleClose}>Vazgeç</Button>
-                        <Button onClick={DeleteProd}>Sil</Button>
+                            <Button onClick={handleClose}>Vazgeç</Button>
+                            <Button onClick={DeleteProd}>Sil</Button>
                         </Box>
                     </DialogActions>
                 </Dialog>
@@ -228,16 +227,18 @@ export default function Grid(props) {
     }
 
     const columns = [
-        {field: 'productName', width: 150, headerName:"Ürün Adı"},
-        {field: 'price',width: 150,headerName:" Ürün Fiyat"},
-        {field: 'stock', width: 100,headerName:"Adet"},
-        {field: 'discount', width: 150,headerName:"İndirim"},
-        {field: 'createDate',headerName:"Kayıt Zamanı",
-            valueFormatter: dateFormatter},
-        {field: 'barcode', width: 180,headerName:"Barkod"},
+        {field: 'productName', width: 150, headerName: "Ürün Adı"},
+        {field: 'price', width: 150, headerName: " Ürün Fiyat"},
+        {field: 'stock', width: 100, headerName: "Adet"},
+        {field: 'discount', width: 150, headerName: "İndirim"},
+        {
+            field: 'createDate', headerName: "Kayıt Zamanı",
+            valueFormatter: dateFormatter
+        },
+        {field: 'barcode', width: 180, headerName: "Barkod"},
         {
             field: 'active',
-            headerName:"Aktif",
+            headerName: "Aktif",
             width: 100,
             cellRendererFramework: AgGridCheckbox,
             editable: false
@@ -310,7 +311,7 @@ export default function Grid(props) {
     return (
         <div className="ag-theme-alpine-dark" style={{height: 1000, width: 1800}}>
             <BarChart categoryArray={categoryArray}/>
-            <div id="form" style={{marginBottom: 10, marginTop: 20, marginLeft: 0}}>
+            <div id="form" style={{marginBottom: 10, marginTop: 20, marginLeft: 250}}>
                 <FormUI prodId={prodId} activeCheck={activeCheck}
                         category={category}/>{/*seçilen productid forma gönderildi*/}
 
