@@ -1,5 +1,5 @@
 
-import {Form} from "reactstrap";
+import { Form} from "reactstrap";
 import './App.css';
 import {Box, FormControlLabel, TextField, Checkbox, Select, MenuItem} from "@mui/material";
 import React, { useState,useEffect } from 'react';
@@ -45,12 +45,12 @@ axios(config)
 //endregion
 
 export default function FormUI(props) {
-    //combo işlemleri
+    // region combo işlemleri
     const [categoryName, setCategoryName] = useState([]);
     const handleChangeCombo = (event) => {
         setCategoryName(event.target.value);//comboya görünecek kategoriyi setlemek için
     };
-
+    // endregion
     // region save ve update
     const handleSubmitSave = () => {
         /* const formData = new FormData(event.target)//form getvalue
@@ -157,7 +157,9 @@ export default function FormUI(props) {
     // endregion
 
     return (
+
         <div className="card">
+
             <br/>
             <h4 id="label" style={{marginLeft: 20, marginBottom: 50}}>ÜRÜN BİLGİLERİ</h4>
             <div className="card-body">
@@ -165,7 +167,7 @@ export default function FormUI(props) {
                 <Box
                     className="box"
                     sx={{
-                        '& .MuiTextField-root': {m: 1, width: '25ch'},
+                        '& .MuiTextField-root': {m: 1, width: '15ch'},
                     }}
                     noValidate
                     autoComplete="off"

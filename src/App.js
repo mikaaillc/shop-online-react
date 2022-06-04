@@ -9,20 +9,23 @@ function App() {
     return (
         <div style={{overflow: "hidden"}}>
 
-            <div>
+            <div >
                 <Sidebar/>
             </div>
 
-            <div style={{marginLeft: 80, marginTop: 40}}>
+            <div style={{marginTop: 50,marginLeft:80}}>
 
                 <Grid style={{
-                    marginLeft: 80, marginTop: 40,
+                    marginLeft: 90, marginTop: 50,
                     marginBottom: 5,
                     width: 200,
                     height: 40,
                     marginRight: 50
                 }}/>
             </div>
+
+
+
         </div>
     );
 

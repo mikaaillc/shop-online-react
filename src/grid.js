@@ -13,10 +13,12 @@ import {
     DialogContentText,
     DialogActions, Dialog, Box
 } from "@mui/material";
+import './App.css';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { MenuItem, Select} from "@mui/material";
 import * as moment from 'moment';
 import Slide from '@mui/material/Slide';
+import {BarChart} from "./barChart";
 
 
 //forma gönderilen veriler
@@ -25,27 +27,20 @@ var deletedProd;
 var activeCheck = {value: null};
 var category = {value: null};
 
-//region girid load
+//ürün bilgileri için config
 var axios = require('axios');
-var getresponse;
 var config = {
     method: 'get',
     url: 'http://localhost:8082/Product/getAllProduct'
 };
 
-
-axios(config)
-    .then(function (response) {
-        getresponse = response.data;
-    })
-    .catch(function (error) {
-        console.log(error);
-    });
+//bar chart için
+var categoryArray=[];
 //endregion
 
 export default function Grid(props) {
 
-    // region Select box dolduruluyor
+    // region Select box Load
     const [list, setList] = useState([]);
     const [categoryName, setCategoryName] = useState([]);
     useEffect(() => {
@@ -53,6 +48,9 @@ export default function Grid(props) {
             .get("http://localhost:8082/Category/getAllCategory")
             .then((response) => {
                 setList(response.data);
+                response.data.forEach((data) => {//barchart label lar için foeach
+                    categoryArray.push(data.categoryName)
+                })
             })
             .catch((e) => {
                 console.log(e.response.data);
@@ -60,9 +58,22 @@ export default function Grid(props) {
     }, []);
     //endregion
 
+    // region Grid Load
+    const [prodlist, setprodlist] = useState([]);
+    useEffect(() => {
+        axios(config)
+            .then(function (response) {
+                setprodlist(response.data)
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+    }, []);
+    //endregion
+
     //region grid işlemleri
     const gridRef = useRef();
-    const rowData = getresponse;
     const onSelectionChanged = useCallback((props) => {
         const selectedRows = gridRef.current.api.getSelectedRows();
         document.querySelector('Input[name = "productName"]').value =
@@ -148,7 +159,7 @@ export default function Grid(props) {
         };
 
         const DeleteProd = () => {
-            var config = {
+            var configdelete = {
                 method: 'delete',
                 url: 'http://localhost:8082/Product/deleteByProductId/' + deletedProd,//gridden seiçilen ürün id
                 headers: {
@@ -156,9 +167,16 @@ export default function Grid(props) {
                 }
             };
 
-            axios(config)
+            axios(configdelete)
                 .then(function (response) {
                     setOpen(false);
+                    axios(config)
+                        .then(function (response) {
+                            setprodlist(response.data)
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
 
                 })
                 .catch(function (error) {
@@ -171,7 +189,7 @@ export default function Grid(props) {
             }}>
 
                 <Button onClick={showWarninig} variant="outlined" startIcon={<DeleteIcon/>} style={{color: "#c05f5f"}}>
-                    Sil
+                    DELETE
                 </Button>
                 <Dialog
                     open={open}
@@ -290,15 +308,18 @@ export default function Grid(props) {
     //endregion
 
     return (
-        <div className="ag-theme-alpine-dark" style={{height: 1000, width: 1300, margin: "auto"}}>
-            <div id="form" style={{marginBottom: 10, marginTop: 40, marginLeft: 50}}>
+        <div className="ag-theme-alpine-dark" style={{height: 1000, width: 1800}}>
+            <BarChart categoryArray={categoryArray}/>
+            <div id="form" style={{marginBottom: 10, marginTop: 20, marginLeft: 0}}>
                 <FormUI prodId={prodId} activeCheck={activeCheck}
                         category={category}/>{/*seçilen productid forma gönderildi*/}
+
             </div>
-            <div className="ag-theme-alpine-dark" style={{height: 400, width: 1450, margin: "auto"}}>
+
+            <div className="ag-theme-alpine-dark" style={{height: 400, width: 1800}}>
                 <AgGridReact
                     className="grid"
-                    rowData={rowData}
+                    rowData={prodlist}
                     columnDefs={columns}
                     ref={gridRef}
                     rowHeight={50}
