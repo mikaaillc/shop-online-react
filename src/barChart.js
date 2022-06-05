@@ -28,8 +28,8 @@ let chartOptions = {
                         zeroLineColor: "transparent",
                     },
                     ticks: {
-                        suggestedMin: 60,
-                        suggestedMax: 120,
+                        suggestedMin: 0,
+                        suggestedMax: 10,
                         padding: 20,
                         fontColor: "#9e9e9e",
                     },
@@ -68,15 +68,15 @@ export function BarChart(props) {
             labels: props.categoryArray,
             datasets: [
                 {
-                    label: "Countries",
+                    label: "Kategori",
                     fill: true,
                     backgroundColor: gradientStroke,
                     hoverBackgroundColor: gradientStroke,
-                    borderColor: "#d08ec9",
+                    borderColor: "#ff00e3",
                     borderWidth: 2,
                     borderDash: [],
                     borderDashOffset: 0.0,
-                    data: [53, 20, 10],
+                    data: props.categoryData,
                 },
             ],
         };

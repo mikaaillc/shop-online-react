@@ -7,6 +7,7 @@ import Icon from '@mui/material/Icon';
 
 
 
+
 function App() {
 
 
@@ -35,10 +36,10 @@ function App() {
                 <ProSidebar style={{height: 900, width: 200, marginLeft: 20, marginTop: 20, fontSize: 5}}>
                     <Menu iconShape="circle" style={{marginLeft: 20, marginTop: 20}}>
                         <MenuItem id={"menuItem"}> <span id="usericon"></span> ShopOnline </MenuItem>
-                        <MenuItem className="menuItem2" onClick={(e) => setRenderItems("products")}> <span
-                            id="prodicon"></span>Ürünler</MenuItem>
-                        <MenuItem className="menuItem2" onClick={(e) => setRenderItems("category")}><span
-                            id="categoryicon"></span>Kategoriler</MenuItem>
+                        <button className="menuItem2" onClick={(e) => setRenderItems("products")}> <span
+                            id="prodicon"></span>Ürünler</button>
+                        <button className="menuItem2" onClick={(e) => setRenderItems("category")}><span
+                            id="categoryicon"></span>Kategoriler</button>
 
                     </Menu>
                 </ProSidebar>

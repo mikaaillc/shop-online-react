@@ -41,13 +41,31 @@ export default function Grid(props) {
     const [list, setList] = useState([]);
     const [categoryName, setCategoryName] = useState([]);
     const [categoryArray ]=useState([]);//barchart için kategori array
+    const [categoryData]=useState([]);//barchart data
     useEffect(() => {
         axios
             .get("http://localhost:8082/Category/getAllCategory")
             .then((response) => {
                 setList(response.data);
+                // response.data.forEach((data) => {//barchart label lar için foeach
+                //     categoryArray.push(data.categoryName)
+                // })
+            })
+            .catch((e) => {
+                console.log(e.response.data);
+            });
+    }, []);
+    //endregion
+
+    // region barchart load
+    useEffect(() => {
+        axios
+            .get("http://localhost:8082/Category/getCategoryData")
+            .then((response) => {
+                debugger;
                 response.data.forEach((data) => {//barchart label lar için foeach
-                    categoryArray.push(data.categoryName)
+                    categoryArray.push(data[1])
+                    categoryData.push(data[0])
                 })
             })
             .catch((e) => {
@@ -226,10 +244,10 @@ export default function Grid(props) {
     }
 
     const columns = [
-        {field: 'productName', width: 150, headerName: "Ürün Adı"},
-        {field: 'price', width: 150, headerName: " Ürün Fiyat"},
-        {field: 'stock', width: 100, headerName: "Adet"},
-        {field: 'discount', width: 150, headerName: "İndirim"},
+        {field: 'productName', width: 150, headerName: "Ürün Adı",sortable: true},
+        {field: 'price', width: 150, headerName: " Ürün Fiyat",sortable: true},
+        {field: 'stock', width: 100, headerName: "Adet",sortable: true},
+        {field: 'discount', width: 150, headerName: "İndirim",sortable: true},
         {
             field: 'createDate', headerName: "Kayıt Zamanı",
             valueFormatter: dateFormatter
@@ -309,7 +327,7 @@ export default function Grid(props) {
 
     return (
         <div className="ag-theme-alpine-dark" style={{height: 1000, width: 1800}}>
-            <BarChart categoryArray={categoryArray}/>
+            <BarChart categoryArray={categoryArray} categoryData={categoryData}/>
             <div id="form" style={{marginBottom: 10, marginTop: 20, marginLeft: 250}}>
                 <FormUI prodId={prodId} activeCheck={activeCheck}
                         category={category}/>{/*seçilen productid forma gönderildi*/}
