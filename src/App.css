@@ -87,7 +87,8 @@
     border-radius: 0.2rem;
     background-color: rgb(255, 255, 255);
     border: none;
-    display: block
+    display: block;
+    margin-left: auto;
 
 }
 
@@ -98,7 +99,8 @@
     border-radius: 0.2rem;
     color: rgb(255, 255, 255);
     border: none;
-    display: block
+    display: block;
+    margin-bottom: 10px;
 
 }
 
@@ -156,12 +158,12 @@
     border: none;
     color: #FFFFFF;
     text-align: center;
-    font-size: 30px;
+    font-size:25px;
     padding: 20px;
     transition: all 0.5s;
     cursor: pointer;
     margin-bottom: 10px;
-    width: 200px;
+    width: 220px;
 
 }
 

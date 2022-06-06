@@ -62,7 +62,6 @@ export default function Grid(props) {
         axios
             .get("http://localhost:8082/Category/getCategoryData")
             .then((response) => {
-                debugger;
                 response.data.forEach((data) => {//barchart label lar için foeach
                     categoryArray.push(data[1])
                     categoryData.push(data[0])
@@ -162,18 +161,40 @@ export default function Grid(props) {
         );
     }
 
-    function DeleteButton() {
-        const [open, setOpen] = useState(false);
-        const Transition = React.forwardRef(function Transition(props, ref) {
-            return <Slide direction="up" ref={ref} {...props} />;
-        });
-        const showWarninig = () => {
-            setOpen(true);
-        };
-        const handleClose = () => {
-            setOpen(false);
-        };
+    const [open, setOpen] = useState(false);
+    const Transition = React.forwardRef(function Transition(props, ref) {
+        return <Slide direction="up" ref={ref} {...props} />;
+    });
+    const showWarninig = () => {
+        setOpen(true);
+    };
+    const handleClose = () => {
+        setOpen(false);
+    };
 
+    function DeleteButton() {
+       /*  const [show, setShow] = useState()
+        const Message = ({ variant, children }) => {
+            useEffect(() => {
+                const timeId = setTimeout(() => {
+                setShow(false)
+                }, 3000)
+    
+                return () => {
+                clearTimeout(timeId)
+                }
+            }, []);
+            return (
+                <div className={`alert alert-${variant}`}>
+                {children}
+                </div>
+            )
+        }
+    
+        Message.defaultPros = {
+            variant: 'info',
+        } */
+        
         const DeleteProd = () => {
             var configdelete = {
                 method: 'delete',
@@ -185,8 +206,8 @@ export default function Grid(props) {
 
             axios(configdelete)
                 .then(function (response) {
-                    setOpen(false);
-                    axios(config)
+                    setOpen(false);//kutucuk kapandı
+                    axios(config)//grid load oldu
                         .then(function (response) {
                             setprodlist(response.data)
                         })

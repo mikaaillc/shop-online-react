@@ -176,7 +176,7 @@ export default function FormUI(props) {
                             label="Ürün Adı:"
                             id="label"
                             control={<TextField id="textfield" name="productName" variant="outlined"
-                                                style={{width: 500}}
+                                                style={{marginLeft:5,width: 500}}
                             />}
                             labelPlacement="start"
 
@@ -192,7 +192,8 @@ export default function FormUI(props) {
                             <FormControlLabel
                                 label="İndirim:"
                                 id="label"
-                                control={<TextField id="textfield" name="discount" variant="outlined"/>}
+                                control={<TextField id="textfield" name="discount" variant="outlined"
+                                        />}
                                 labelPlacement="start"
                             />
                             <FormControlLabel
