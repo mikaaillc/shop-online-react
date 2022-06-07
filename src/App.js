@@ -1,10 +1,10 @@
 import './App.css';
 import 'react-pro-sidebar/dist/css/styles.css';
 import Grid from "./grid";
+import CategoryForm from "./categoryForm";
 import {Menu, MenuItem, ProSidebar, SubMenu} from "react-pro-sidebar";
 import React, {useState} from "react";
-import Icon from '@mui/material/Icon';
-
+import './App.css';
 
 
 
@@ -25,8 +25,12 @@ function App() {
             }}/>
         </div>;
     } else if(renderItems=="category"){
-           return <div style={{marginTop: 50, marginLeft: 100}}>
-            <h1>Kategori Bölümü</h1>
+           return <div  id="form" style={{marginTop: 50, marginLeft: 360, width: 850 ,height:300}}>
+               <CategoryForm    style={{
+                   marginLeft: 300, marginTop: 20,
+                   marginBottom: 10,
+                   marginRight: 50
+               }}/>
         </div>;
     }}
 
