@@ -45,7 +45,7 @@
     margin-right: 20px;
     margin-top: 20px;
     border-radius: 50px;
-    background: #6c6f85;
+    background: #484a60;
     font-size: 1.3rem;
     box-shadow: 2px 2px 5px #7d2793;
 
@@ -366,5 +366,8 @@
     visibility: hidden;
     -webkit-transform: translateY(-4rem);
     transform: translateY(-4rem);
+}
+.wrapper{
+
 }
 
