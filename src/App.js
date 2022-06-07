@@ -37,16 +37,16 @@ function App() {
     return (
         <div style={{overflow: "hidden"}}>
             <div id="sidebar">
-                <ProSidebar style={{height: 900, width: 200, marginLeft: 20, marginTop: 20, fontSize: 5}}>
-                    <Menu iconShape="circle" style={{marginLeft: 20, marginTop: 20}}>
-                        <MenuItem id={"menuItem"}> <span id="usericon"></span> ShopOnline </MenuItem>
-                        <button className="menuItem2" onClick={(e) => setRenderItems("products")}> <span
+
+                    <Menu  style={{ marginTop: 50 ,marginRight:5}}>
+                        <MenuItem style={{marginBottom:50,marginTop:80}} id={"menuItem"}> <span id="usericon"></span> ShopOnline </MenuItem>
+                        <button style={{float:"left"}} className="menuItem2" onClick={(e) => setRenderItems("products")}> <span
                             id="prodicon"></span>Ürünler</button>
                         <button className="menuItem2" onClick={(e) => setRenderItems("category")}><span
                             id="categoryicon"></span>Kategoriler</button>
 
                     </Menu>
-                </ProSidebar>
+
             </div>
             <RederItems/>
 

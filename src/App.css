@@ -47,6 +47,7 @@
     border-radius: 50px;
     background: #6c6f85;
     font-size: 1.3rem;
+    box-shadow: 2px 2px 5px #7d2793;
 
 }
 
@@ -63,6 +64,7 @@
     margin-left: 20px;
     margin-right: 10px;
     font-size: 1.3rem;
+    box-shadow: 2px 2px 5px #7d2793;
 
 }
 
@@ -76,6 +78,7 @@
     flex: auto;
     float: right;
     font-size: 1.3rem;
+    box-shadow: 2px 2px 5px #7d2793;
 
 }
 
@@ -101,6 +104,7 @@
     border: none;
     display: block;
     margin-bottom: 10px;
+    margin-left: 15px;
 
 }
 
@@ -162,15 +166,14 @@
     padding: 20px;
     transition: all 0.5s;
     cursor: pointer;
-    margin-bottom: 10px;
-    width: 220px;
+    margin-bottom: 15px;
+    width: 250px;
 
 }
 
 .menuItem2 span {
     cursor: pointer;
     display: inline-block;
-    position: relative;
     transition: 0.5s;
 }
 
