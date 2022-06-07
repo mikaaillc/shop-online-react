@@ -67,6 +67,18 @@
     box-shadow: 2px 2px 5px #7d2793;
 
 }
+#form2 {
+    height: 480px;
+    width: 1140px;
+    border-radius: 20px;
+    background-color: #15151e;
+    flex: auto;
+    margin-left: 20px;
+    margin-right: 10px;
+    font-size: 1.3rem;
+    box-shadow: 2px 2px 5px #7d2793;
+
+}
 
 #graph {
     height: 450px;

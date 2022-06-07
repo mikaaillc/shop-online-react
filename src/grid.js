@@ -265,19 +265,29 @@ export default function Grid(props) {
     }
 
     const columns = [
-        {field: 'productName', width: 150, headerName: "Ürün Adı",sortable: true},
-        {field: 'price', width: 150, headerName: " Ürün Fiyat",sortable: true},
-        {field: 'stock', width: 100, headerName: "Adet",sortable: true},
-        {field: 'discount', width: 150, headerName: "İndirim",sortable: true},
+        {field: 'productName', width: 200, headerName: "Ürün Adı",sortable: true ,
+            filter: 'agTextColumnFilter',
+            filterParams: {
+                buttons: ['reset', 'apply'],
+                debounceMs: 200
+            }},
+        {field: 'price', width: 160, headerName: " Ürün Fiyat",sortable: true},
+        {field: 'stock', width: 110, headerName: "Adet",sortable: true},
+        {field: 'discount', width: 160, headerName: "İndirim",sortable: true},
         {
             field: 'createDate', headerName: "Kayıt Zamanı",
             valueFormatter: dateFormatter
         },
-        {field: 'barcode', width: 180, headerName: "Barkod"},
+        {field: 'barcode', width: 180, headerName: "Barkod",
+            filter: 'agTextColumnFilter',
+            filterParams: {
+                buttons: ['reset', 'apply'],
+                debounceMs: 200
+            }},
         {
             field: 'active',
             headerName: "Aktif",
-            width: 100,
+            width: 110,
             cellRendererFramework: AgGridCheckbox,
             editable: false
         },
@@ -355,7 +365,7 @@ export default function Grid(props) {
 
             </div>
 
-            <div className="ag-theme-alpine-dark" style={{height: 400, width: 1800}}>
+            <div id="form2" style={{height: 400, width: 1560,marginLeft: 250}}>
                 <AgGridReact
                     className="grid"
                     rowData={prodlist}
