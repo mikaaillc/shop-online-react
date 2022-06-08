@@ -42,6 +42,7 @@ export default function Grid(props) {
     const [categoryName, setCategoryName] = useState([]);
     const [categoryArray ]=useState([]);//barchart için kategori array
     const [categoryData]=useState([]);//barchart data
+    const [maxCategoryValue,setMaxCategoryValue]=useState(5);
     useEffect(() => {
         axios
             .get("http://localhost:8082/Category/getAllCategory")
@@ -66,6 +67,7 @@ export default function Grid(props) {
                     categoryArray.push(data[1])
                     categoryData.push(data[0])
                 })
+                setMaxCategoryValue(Math.max(...categoryData)+1)//max kategori verisi alınıyor
             })
             .catch((e) => {
                 console.log(e.response.data);
@@ -358,7 +360,7 @@ export default function Grid(props) {
 
     return (
         <div className="ag-theme-alpine-dark" style={{height: 1000, width: 1800}}>
-            <BarChart categoryArray={categoryArray} categoryData={categoryData}/>
+            <BarChart categoryArray={categoryArray} categoryData={categoryData} maxCategoryValue={maxCategoryValue}/>
             <div id="form" style={{marginBottom: 10, marginTop: 20, marginLeft: 250}}>
                 <FormUI prodId={prodId} activeCheck={activeCheck}
                         category={category}/>{/*seçilen productid forma gönderildi*/}

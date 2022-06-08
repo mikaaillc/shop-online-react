@@ -2,57 +2,58 @@ import {Card, CardBody, CardHeader} from "reactstrap";
 import {Bar} from "react-chartjs-2";
 import React, {useState} from "react";
 
-let chartOptions = {
-    options: {
-        maintainAspectRatio: false,
-        legend: {
-            display: false,
-        },
-        tooltips: {
-            backgroundColor: "#f5f5f5",
-            titleFontColor: "#333",
-            bodyFontColor: "#666",
-            bodySpacing: 4,
-            xPadding: 12,
-            mode: "nearest",
-            intersect: 0,
-            position: "nearest",
-        },
-        responsive: true,
-        scales: {
-            yAxes: [
-                {
-                    gridLines: {
-                        drawBorder: false,
-                        color: "rgba(225,78,202,0.1)",
-                        zeroLineColor: "transparent",
-                    },
-                    ticks: {
-                        suggestedMin: 0,
-                        suggestedMax: 10,
-                        padding: 20,
-                        fontColor: "#9e9e9e",
-                    },
-                },
-            ],
-            xAxes: [
-                {
-                    gridLines: {
-                        drawBorder: false,
-                        color: "rgba(255,255,255,0.1)",
-                        zeroLineColor: "transparent",
-                    },
-                    ticks: {
-                        padding: 20,
-                        fontColor: "#9e9e9e",
-                    },
-                },
-            ],
-        },
-    },
-}
+
 export function BarChart(props) {
 
+    const chartOptions = {
+        options: {
+            maintainAspectRatio: false,
+            legend: {
+                display: false,
+            },
+            tooltips: {
+                backgroundColor: "#f5f5f5",
+                titleFontColor: "#333",
+                bodyFontColor: "#666",
+                bodySpacing: 4,
+                xPadding: 12,
+                mode: "nearest",
+                intersect: 0,
+                position: "nearest",
+            },
+            responsive: true,
+            scales: {
+                yAxes: [
+                    {
+                        gridLines: {
+                            drawBorder: false,
+                            color: "rgba(225,78,202,0.1)",
+                            zeroLineColor: "transparent",
+                        },
+                        ticks: {
+                            suggestedMin: 0,
+                            suggestedMax: props.maxCategoryValue,
+                            padding: 20,
+                            fontColor: "#9e9e9e",
+                        },
+                    },
+                ],
+                xAxes: [
+                    {
+                        gridLines: {
+                            drawBorder: false,
+                            color: "rgba(255,255,255,0.1)",
+                            zeroLineColor: "transparent",
+                        },
+                        ticks: {
+                            padding: 20,
+                            fontColor: "#9e9e9e",
+                        },
+                    },
+                ],
+            },
+        },
+    }
     const data = (canvas) => {
 
         let ctx = canvas.getContext("2d");
