@@ -93,6 +93,15 @@
     box-shadow: 2px 2px 5px #7d2793;
 
 }
+#TableCategory{
+    margin-bottom: 5px;
+    border-radius: 20px;
+    background-color: #15151e;
+    flex: auto;
+    float: right;
+    font-size: 1.3rem;
+    box-shadow: 2px 2px 5px #7d2793;
+}
 
 #textfield {
     margin: auto;

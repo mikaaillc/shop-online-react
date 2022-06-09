@@ -23,6 +23,7 @@
     "perfect-scrollbar": "^1.5.5",
     "prop-types": "^15.8.1",
     "react": "^18.1.0",
+    "react-bootstrap": "^2.4.0",
     "react-chartjs-2": "2.11.1",
     "react-dom": "^18.1.0",
     "react-hook-form": "^7.31.2",
