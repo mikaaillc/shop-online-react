@@ -45,7 +45,7 @@ export default function Grid(props) {
     const [maxCategoryValue,setMaxCategoryValue]=useState(5);
     useEffect(() => {
         axios
-            .get("http://localhost:8082/Category/getAllCategory")
+            .get("http://localhost:8082/Category/getAllCategoryByActive?active=1")//aktif kategorileri getirmek için
             .then((response) => {
                 setList(response.data);
                 // response.data.forEach((data) => {//barchart label lar için foeach

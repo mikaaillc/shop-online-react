@@ -8,7 +8,7 @@ var axios = require('axios');
 var categories = null;
 var config = {
     method: 'get',
-    url: "http://localhost:8082/Category/getAllCategory"
+    url: "http://localhost:8082/Category/getAllCategoryByActive?active=1"//aktif kategorileri getirmek için
 };
 axios(config)
     .then(function (response) {

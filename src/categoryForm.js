@@ -1,19 +1,15 @@
-import React, {useState,useEffect} from "react";
+import React, {useState,useEffect,useRef} from "react";
 import axios from "axios";
-import {Box, FormControlLabel, MenuItem, TextField, Menu, TablePagination} from "@mui/material";
+import {Box, FormControlLabel,Checkbox, MenuItem, TextField, Menu, TablePagination} from "@mui/material";
 
 import './App.css';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
+import {AgGridReact} from "ag-grid-react";
+import 'ag-grid-community/dist/styles/ag-theme-dark.css';
+
 
 export default function CategoryForm(props) {
     //Kategori get
-    const [list, setCategory] = useState([]);
+    const [categoryList, setCategory] = useState([]);
     useEffect(() => {
         axios
             .get("http://localhost:8082/Category/getAllCategory")
@@ -31,6 +27,7 @@ export default function CategoryForm(props) {
 
         var data = JSON.stringify({
             "categoryName": categoryName,
+            "active" : true
         });
 
         var config = {
@@ -59,7 +56,31 @@ export default function CategoryForm(props) {
             });
     }
     // endregion
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    function AgGridCheckbox(props) {
+        const boolValue = props.value && props.value.toString() === 'true';
+        const [isChecked, setIsChecked] = useState(boolValue);
+        const onChanged = () => {
+            props.setValue(!isChecked);
+            setIsChecked(!isChecked);
+        };
+        return (
+            <div>
+                <input type="checkbox" checked={isChecked} onChange={onChanged}/>
+            </div>
+        );
+    }
+    const gridRef = useRef();
+    const columns = [
+        {field: 'id', width: 160, headerName: "Kategori Id",sortable: true},
+        {field: 'categoryName', width: 300  , headerName: "Kategori",sortable: true},
+        {
+            field: 'active',
+            headerName: "Aktif",
+            width: 110,
+            cellRendererFramework: AgGridCheckbox,
+            editable: false
+        },
+        ];
     return (
 
         <div className="card">
@@ -91,7 +112,22 @@ export default function CategoryForm(props) {
                         </div>
 
                 </Box>
-                <TableContainer id="TableCategory" style={{marginTop:180 ,borderRadius:10}} component={Paper} >
+                <div  className="ag-theme-dark"  id="form2" style={{ marginTop:180,height: 400, width: 575}}>
+                    <AgGridReact
+                        className="grid"
+                        rowData={categoryList}
+                        columnDefs={columns}
+                        ref={gridRef}
+
+                        rowHeight={50}
+                        rowSelection={'single'}
+                        //onRowClicked={handleChange}
+
+                    >
+                    </AgGridReact>
+                </div>
+
+                {/*<TableContainer id="TableCategory" style={{marginTop:180 ,borderRadius:10}} component={Paper} >
                     <Table sx={{ minWidth: 650 }} aria-label="sticky table" bgcolor={"#2f323b"} style={{borderRadius:5}}  >
                         <TableHead>
                             <TableRow>
@@ -100,16 +136,19 @@ export default function CategoryForm(props) {
                         </TableHead>
                         <TableBody>
                             {list.map((row) => (
+
                                 <TableRow
                                     key={row.name}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-
                                 >
-                                    <TableCell component="th" scope="row" id="label" >
+                                        <TableCell component="th" scope="row" id="label" >
                                         {row.id}
                                     </TableCell>
                                     <TableCell  id="label" align="left">{row.categoryName}</TableCell>
-
+                                    <TableCell  id="label" align="left">
+                                        <Checkbox checked={row.active}
+                                                  onClick={(e) => setChecked(!checked)}/>
+                                           </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
@@ -119,7 +158,7 @@ export default function CategoryForm(props) {
                         component="div"
                         count={list.length}
                     />
-                </TableContainer>
+                </TableContainer>*/}
 
 
             </div>
