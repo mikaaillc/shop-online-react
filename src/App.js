@@ -2,7 +2,7 @@ import './App.css';
 import 'react-pro-sidebar/dist/css/styles.css';
 import Grid from "./grid";
 import CategoryForm from "./categoryForm";
-import {Menu, MenuItem, ProSidebar, SubMenu} from "react-pro-sidebar";
+import {Menu, MenuItem} from "react-pro-sidebar";
 import React, {useState} from "react";
 import './App.css';
 
@@ -14,7 +14,7 @@ function App() {
     const [renderItems,setRenderItems] = useState("products");
 
     const RederItems= () =>{//render olacak itemleri belirlemek için
-        if (renderItems=="products") {
+        if (renderItems==="products") {
            return <div style={{marginTop: 50, marginLeft: 100}}>
             <Grid style={{
                 marginLeft: 90, marginTop: 50,
@@ -24,7 +24,7 @@ function App() {
                 marginRight: 50
             }}/>
         </div>;
-    } else if(renderItems=="category"){
+    } else if(renderItems==="category"){
            return <div  id="form" style={{marginTop: 50, marginLeft: 360, width: 850 ,height:300}}>
                <CategoryForm    style={{
                    marginLeft: 300, marginTop: 20,

@@ -1,5 +1,4 @@
 import React, {useCallback, useRef, useState, useEffect} from 'react';
-import FormUI from "./form";
 import {AgGridReact} from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine-dark.css';
@@ -10,7 +9,7 @@ import {
     DialogTitle,
     DialogContent,
     DialogContentText,
-    DialogActions, Dialog, Box
+    DialogActions, Dialog, Box, TextField
 } from "@mui/material";
 import './App.css';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -18,13 +17,12 @@ import {MenuItem, Select} from "@mui/material";
 import * as moment from 'moment';
 import Slide from '@mui/material/Slide';
 import {BarChart} from "./barChart";
-
+import {Form} from "reactstrap";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 //forma gönderilen veriler
-var prodId = {value: null};
 var deletedProd;
-var activeCheck = {value: null};
-var category = {value: null};
 
 //ürün bilgileri için config
 var axios = require('axios');
@@ -35,9 +33,49 @@ var config = {
 
 //endregion
 
+// region category combo load
+var categories = null;
+var configCategory= {
+    method: 'get',
+    url: "http://localhost:8082/Category/getAllCategoryByActive?active=1"//aktif kategorileri getirmek için
+};
+axios(configCategory)
+    .then(function (response) {
+        categories = response.data;
+    })
+    .catch(function (error) {
+        console.log(error);
+    });
+//endregion
+// region aktif check denemesi
+/*function CheckAktif(props) {
+    const [checked, setChecked] = useState(false);
+    var check  = props.activeCheck.value
+    if (check== true){
+        setChecked((checked) => true);
+        props.activeCheck.value=null
+    }
+    if (check== false){
+        setChecked((checked) => false);
+        props.activeCheck.value=null
+    }
+    const checkActiveChange = (event) => {
+        debugger;
+        setChecked(event.target.checked);
+    }
+
+    return  (
+        <Checkbox  checked={checked}
+        onClick={checkActiveChange}
+        name="chkAktif"  />
+    );
+  }*/
+//endregion
+
 export default function Grid(props) {
 
     // region Select box Load
+    const [checkedAktif, setCheckedAktif] = useState(false);
     const [list, setList] = useState([]);
     const [categoryName, setCategoryName] = useState([]);
     const [categoryArray ]=useState([]);//barchart için kategori array
@@ -103,15 +141,18 @@ export default function Grid(props) {
             selectedRows.length === 1 ? selectedRows[0].stock : '';
         document.querySelector('input[name = "barcode"]').value =
             selectedRows.length === 1 ? selectedRows[0].barcode : '';
-        prodId.value = selectedRows[0].id;
+        const fakeEvent = {//combo setlemek için yapılan yapı fake event oluşturularak combodan seçim yapılmış gibi yazıldı
+            target: {
+                value: selectedRows[0].category.categoryName
+            }
+        }
+        handleChangeComboValue(fakeEvent)
         deletedProd = selectedRows[0].id;
-        activeCheck.value = selectedRows[0].active
-        category.value = selectedRows[0].category
-        // if (selectedRows[0].active== true){
-        //     setChecked((checked) => true);
-        // }else{
-        //     setChecked((checked) => false);// constların valuları setlenirken arrow func kullnılır
-        // }
+        if (selectedRows[0].active== true){
+            setCheckedAktif((checked) => true);
+        }else{
+            setCheckedAktif((checked) => false);// constların valuları setlenirken arrow func kullnılır
+        }
 
     }, []);
 
@@ -124,12 +165,12 @@ export default function Grid(props) {
         };
         return (
             <div>
-                <input type="checkbox" checked={isChecked} onChange={onChanged}/>
+                <input type="checkbox" name="aktif" disabled={true} checked={isChecked} onChange={onChanged}/>
             </div>
         );
     }
 
-    function AgGridcombo(props) {
+    /*function AgGridcombo(props) {
         const category = props.value;
         const [categoryValue, setcategoryValue] = useState(category);
         const onChanged = (event) => {
@@ -139,7 +180,6 @@ export default function Grid(props) {
         return (
             <div>
                 <Select
-                    name='combovalue'
                     value={categoryValue}
                     onChange={onChanged}
                     style={{
@@ -161,7 +201,7 @@ export default function Grid(props) {
                 </Select>
             </div>
         );
-    }
+    }*/
 
     const [open, setOpen] = useState(false);
     const Transition = React.forwardRef(function Transition(props, ref) {
@@ -174,28 +214,128 @@ export default function Grid(props) {
         setOpen(false);
     };
 
+    // region save ve update
+    const handleSubmitSave = () => {
+        /* const formData = new FormData(event.target)//form getvalue
+        const data = {}
+
+        event.preventDefault()
+
+        for (let entry of formData.entries()) {
+            data[entry[0]] = entry[1]
+        }*/
+
+        var productName = document.querySelector('Input[name = "productName"]').value
+        var discount = document.querySelector('Input[name = "discount"]').value
+        var price = document.querySelector('Input[name = "price"]').value
+        var stock = document.querySelector('Input[name = "stock"]').value
+        var barcode = document.querySelector('Input[name = "barcode"]').value
+        var active =checkedAktif//ürün ilk kayıt yapılırken aktif kontrolü için
+        var combovalue = document.querySelector('Input[name = "combovalue"]').value
+
+
+        var value = categories.filter(function (item) {
+            if (item.categoryName === combovalue)//secilmiş olan combonun valuesu
+                return item.id
+        })
+
+        var data = JSON.stringify({
+            "productName": productName,
+            "discount": discount,
+            "price": price,
+            "stock": stock,
+            "active": active,
+            "barcode": barcode,
+            "category": {
+                "id": value[0].id
+            },
+            "userId": 1 // todo giriş yapan kullanıcının id si
+        });
+
+        var configSave = {
+            method: 'post',
+            url: 'http://localhost:8082/Product/addProduct',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: data
+        };
+
+        axios(configSave)
+            .then(function (response) {
+                axios(config)//grid load oldu
+                    .then(function (response) {
+                        toast.success("İşlem Başarılı!");
+                        setprodlist(response.data)
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+    }
+    const handleSubmitUpdate = () => {
+        const selectedRows = gridRef.current.api.getSelectedRows();
+        var productName = document.querySelector('Input[name = "productName"]').value
+        var discount = document.querySelector('Input[name = "discount"]').value
+        var price = document.querySelector('Input[name = "price"]').value
+        var stock = document.querySelector('Input[name = "stock"]').value
+        var barcode = document.querySelector('Input[name = "barcode"]').value
+        var active =checkedAktif
+        var combovalue =  document.querySelector('Input[name = "combovalue"]').value
+        var value = categories.filter(function (item) {
+            if (item.categoryName === combovalue)//secilmiş olan combonun valuesu
+                return item.id
+        })
+
+
+        var data = JSON.stringify({
+            "productName": productName,
+            "discount": discount,
+            "price": price,
+            "stock": stock,
+            "active": active,
+            "barcode": barcode,
+            "category": {
+                "id": value[0].id
+            },
+            "userId": 1 // todo giriş yapan kullanıcının id si
+        });
+
+        var configUpdate = {
+            method: 'put',
+            url: 'http://localhost:8082/Product/updateProduct/' +selectedRows[0].id,//gridden seiçilen ürün id
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: data
+        };
+
+        axios(configUpdate)
+            .then(function (response) {
+                //todo show alert
+                console.log(JSON.stringify(response.data));
+                axios(config)
+                    .then(function (response) {
+                        toast.success("İşlem Başarılı!");
+                        setprodlist(response.data)
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            })
+            .catch(function (error) {
+
+                console.log(error);
+            });
+
+    }
+    // endregion
     function DeleteButton() {
-       /*  const [show, setShow] = useState()
-        const Message = ({ variant, children }) => {
-            useEffect(() => {
-                const timeId = setTimeout(() => {
-                setShow(false)
-                }, 3000)
-    
-                return () => {
-                clearTimeout(timeId)
-                }
-            }, []);
-            return (
-                <div className={`alert alert-${variant}`}>
-                {children}
-                </div>
-            )
-        }
-    
-        Message.defaultPros = {
-            variant: 'info',
-        } */
         
         const DeleteProd = () => {
             var configdelete = {
@@ -211,6 +351,7 @@ export default function Grid(props) {
                     setOpen(false);//kutucuk kapandı
                     axios(config)//grid load oldu
                         .then(function (response) {
+                            toast.success("İşlem Başarılı!");
                             setprodlist(response.data)
                         })
                         .catch(function (error) {
@@ -228,7 +369,7 @@ export default function Grid(props) {
             }}>
 
                 <Button onClick={showWarninig} variant="outlined" startIcon={<DeleteIcon/>} style={{color: "#c05f5f"}}>
-                    DELETE
+                    ÜRÜN SİL
                 </Button>
                 <Dialog
                     open={open}
@@ -297,8 +438,8 @@ export default function Grid(props) {
             headerName: 'Kategori',
             field: 'category.categoryName',
             width: 220,
-            cellRendererFramework: AgGridcombo,
-            editable: false
+  /*          cellRendererFramework: AgGridcombo,
+            editable: false*/
         }, {
             width: 150,
             cellRendererFramework: DeleteButton,
@@ -358,12 +499,148 @@ export default function Grid(props) {
     };
     //endregion
 
+    // region combo işlemleri
+    const handleChangeComboValue = (event) => {
+        setCategoryName(event.target.value);//comboya görünecek kategoriyi setlemek için
+    };
+    // endregion
+
     return (
         <div className="ag-theme-alpine-dark" style={{height: 1000, width: 1800}}>
+            <ToastContainer
+                theme="colored"
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+            />
             <BarChart categoryArray={categoryArray} categoryData={categoryData} maxCategoryValue={maxCategoryValue}/>
             <div id="form" style={{marginBottom: 10, marginTop: 20, marginLeft: 250}}>
-                <FormUI prodId={prodId} activeCheck={activeCheck}
-                        category={category}/>{/*seçilen productid forma gönderildi*/}
+                <div className="card">
+
+                    <br/>
+                    <h3 id="label" style={{marginLeft: 20, marginBottom: 30}}>ÜRÜN BİLGİLERİ</h3>
+                    <div className="card-body">
+
+                        <Box
+                            className="box"
+                            sx={{
+                                '& .MuiTextField-root': {m: 1, width: '25ch'},
+                            }}
+                            noValidate
+                            autoComplete="off"
+                        >
+                            <Form>
+                                <div><FormControlLabel
+                                    label="Ürün Adı:"
+                                    id="label"
+                                    control={<TextField id="textfield" name="productName" variant="outlined"
+                                                        style={{marginLeft:5,width: 500}}
+                                    />}
+                                    labelPlacement="start"
+
+                                />
+                                    <FormControlLabel
+                                        label="Ürün Fiyatı:"
+                                        id="label"
+                                        control={<TextField id="textfield" name="price" variant="outlined"/>}
+                                        labelPlacement="start"
+                                    />
+                                </div>
+                                <div>
+                                    <FormControlLabel
+                                        label="İndirim:"
+                                        id="label"
+                                        control={<TextField id="textfield" name="discount" variant="outlined"
+                                        />}
+                                        labelPlacement="start"
+                                    />
+                                    <FormControlLabel
+                                        label="Stok Miktarı:"
+                                        id="label"
+                                        control={<TextField id="textfield" name="stock" variant="outlined"/>}
+                                        labelPlacement="start"
+                                    />
+                                </div>
+                                <div>
+                                    <FormControlLabel
+                                        label="Barkod:"
+                                        id="label"
+                                        control={<TextField id="textfield" name="barcode" variant="outlined"/>}
+                                        labelPlacement="start"
+                                    />
+
+                                    <FormControlLabel
+                                        label="Kategori:"
+                                        id="label"
+                                        control={
+                                            <Select
+                                                name='combovalue'
+                                                value={categoryName}
+                                                onChange={handleChangeComboValue}
+                                                style={{
+                                                    marginLeft: 5,
+                                                    marginBottom: 5,
+                                                    marginTop: 5,
+                                                    width: 200,
+                                                    height: 40,
+                                                    backgroundColor: "whitesmoke",
+                                                    float: "right",
+                                                    marginRight: 50
+                                                }}
+
+                                            >
+                                                {categories.map((item) => (
+                                                    <MenuItem  key={item.id} value={item.categoryName}>
+                                                        {item.categoryName}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        }
+                                        labelPlacement="start"
+
+                                    />
+                                    <FormControlLabel labelPlacement="start"
+                                                  id="label"
+                                                  style={{alignSelf: 'flex-end'}}
+                                                  control={<Checkbox checked={checkedAktif} onClick={(e)=>setCheckedAktif(!checkedAktif)} name="activeCheck" />} label="Aktif" />
+
+
+                                    {/* <FormControlLabel
+                                    label="Kategori:"
+                                    control={<CategoryCombo style={{float: "right", marginRight: 50}}/>}
+                                    labelPlacement="start"
+                                /> */}
+
+                                    {/* <FormControlLabel labelPlacement="start"
+                                                  control={<Checkbox checked={checked}
+                                                                     onChange={(e) => setChecked(e.target.checked)}
+                                                                     name="chkAktif"/>} label="Aktif"/>*/}
+                                    {/*<FormControlLabel labelPlacement="start"  control={<Checkbox defaultChecked value={check} name="chkAktif"  />} label="Aktif" />*/}
+
+                                </div>
+                            </Form>
+                            <div>
+                                <button className="button" style={{float: "right", marginRight: 50}}
+                                        onClick={handleSubmitUpdate}>
+                                    <span>Güncelle </span>
+                                </button>
+                                <button className="glow-on-hover"
+                                        onClick={handleSubmitSave}
+                                        categories={categories}
+                                        style={{float: "right", marginRight: 50}}>Kaydet
+                                </button>
+                            </div>
+
+                        </Box>
+
+                    </div>
+
+                </div>
 
             </div>
 
@@ -405,9 +682,6 @@ export default function Grid(props) {
                                 float: "right",
                                 marginRight: 50
                             }}
-                            // renderValue={
-                            //     () => <MenuItem> {props.placeholder}</MenuItem>
-                            // }
                         >
                             <MenuItem value='Tumu'>
                                 Tümü
